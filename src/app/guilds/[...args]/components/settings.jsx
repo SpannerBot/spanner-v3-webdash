@@ -131,7 +131,7 @@ export default function SettingsPage({guild}) {
         }
       ).catch((e) => {console.error(e); setCanAccess(false);});
     },
-    [loaded, logChannel, nickNameModeration, logFeatures, availableLogFeatures, canAccess]
+    [guild, loaded, logChannel, nickNameModeration, logFeatures, availableLogFeatures, canAccess]
   )
   if(!canAccess) {
     return <p>You do not have permission to view this page.</p>
