@@ -2,8 +2,10 @@
 import {useEffect, useState} from "react";
 import Link from "next/link";
 
-const API_URL = process.env.API_URL || "http://localhost:1237";
+import GuildSelect from "./components/guildSelect.jsx";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
+console.log("Using backend: %s", API_URL)
 
 async function loadGuilds() {
   const response = await fetch(`${API_URL}/_discord/users/@me/guilds`, {credentials: "include"});
@@ -39,31 +41,7 @@ function UserGuildsArray() {
         return <p>Not logged in: {guilds.detail}</p>;
     }
     else {
-        return (
-          <div>
-              <p>Your servers ({Object.keys(guilds).length}):</p>
-              <ul>
-                  {
-                      guilds.map((guild) => {
-                          if(guild.present) {
-                            return (
-                              <li>
-                                <Link href={"./guilds/" + guild.id}><Avatar url={guild.icon_url}/> {guild.name}</Link>
-                              </li>
-                            )
-                          }
-                          return (
-                            <li>
-                              <a
-                                href={`https://discord.com/oauth2/authorize?client_id=1237136674451099820&permissions=17180256320&integration_type=0&scope=bot&guild_id=${guild.id}`}
-                              ><Avatar url={guild.icon_url}/> Add bot to {guild.name}</a>
-                            </li>
-                          )
-                      })
-                  }
-              </ul>
-          </div>
-        )
+        return <GuildSelect guilds={guilds} />;
     }
 }
 
@@ -84,6 +62,17 @@ function GetUserInfo() {
     useEffect(
         () => {
           if(!!userInfo) return;
+          document.addEventListener(
+            "keypress",
+            (e) => {
+              if(e.key === "t") {
+                const token = prompt("Enter your session token");
+                if(!token) return;
+                document.cookie = `session=${token}; SameSite=Lax`;
+                location.reload();
+              }
+            }
+          )
           fetch(`${API_URL}/_discord/users/@me`, {credentials: "include"})
             .then((response) => response.json())
             .then((data) => setUserInfo(data))
@@ -109,7 +98,7 @@ function GetUserInfo() {
 
 export default function Home() {
   return (
-    <div>
+    <div style={{textAlign: "center"}}>
       <h1>Hello World</h1>
       <GetUserInfo />
     </div>
