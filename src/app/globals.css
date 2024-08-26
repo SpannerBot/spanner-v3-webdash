@@ -1,0 +1,32 @@
+:root {
+    --background-primary: #313338;
+    --background-secondary: #2A2D31;
+    --text-active: #dddadd;
+    --text-muted: #72767d;
+    --text-link: #006ce7;
+    --danger: #DA373C;
+    --primary: #7189DA;
+}
+
+@media (prefers-color-scheme: light) {
+    :root {
+        --background-primary: #FFFFFF;
+        --background-secondary: #F2F3F5;
+        --text-active: #000;
+    }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Whitney', 'Roboto', sans-serif;
+    background-color: var(--background-primary);
+    color: var(--text-active);
+    height: 100%;
+    width: 100%;
+}
+
+a {
+    color: var(--text-link);
+    text-decoration: none;
+}

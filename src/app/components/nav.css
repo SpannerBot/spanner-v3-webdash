@@ -1,0 +1,21 @@
+/* horizontal nav bar */
+
+.navbar {
+    background-color: var(--background-secondary);
+    color: var(--text-active);
+    padding: 0.5rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.navbar ul {
+    display: flex;
+    list-style: none;
+}
+
+.navbar ul li {
+    margin-right: 1rem;
+}
+
