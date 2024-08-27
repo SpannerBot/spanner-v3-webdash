@@ -38,15 +38,15 @@ function LatencyChart({history}) {
     let obj = {};
     let now = new Date();
     for(let i = 0; i < h.length; i++) {
-      const date = new Date(now - (i * 60000));
+      const date = new Date(now - (i * 60000) - 60000);
       obj[i] = {
         name: "Minutely latency",
         latency: h[i],
         date: date,
-        time: date.toLocaleTimeString()
+        time: `${date.getHours()}:${date.getMinutes()}`
       };
     }
-    return Object.values(obj);
+    return Object.values(obj).reverse();
   }
 
   return (
@@ -170,7 +170,7 @@ export default function StatusPage() {
       </div>
       <div>
         <p>Current websocket latency: {data?.latency?.now || '0'} milliseconds</p>
-        {data?.latency?.history && <LatencyChart history={data.latency.history}/>}
+        {data?.latency?.history?.length >= 3   && <LatencyChart history={data.latency.history}/>}
       </div>
     </div>
   )
