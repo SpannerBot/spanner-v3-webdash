@@ -1,11 +1,15 @@
 "use client";
 import {useEffect, useState} from "react";
-import Link from "next/link";
-
 import GuildSelect from "./components/guildSelect.jsx";
+import Image from "next/image";
+import discord_blurple from '../../public/discordblurple.png';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
 console.log("Using backend: %s", API_URL)
+
+export const Spinner = () => {
+  return <span className={"spinner large"}>⌛&nbsp;</span>
+}
 
 async function loadGuilds() {
   const response = await fetch(`${API_URL}/_discord/users/@me/guilds`, {credentials: "include"});
@@ -35,7 +39,7 @@ function UserGuildsArray() {
         }, [guilds]
     )
     if (!guilds ) {
-        return <p>Loading guilds...</p>;
+        return <p><Spinner/>Loading guilds...</p>;
     }
     else if (guilds.detail) {
         return <p>Not logged in: {guilds.detail}</p>;
@@ -80,10 +84,12 @@ function GetUserInfo() {
         }, [userInfo]
     )
     if (userInfo === null) {
-        return <p>Loading...</p>;
+        return <p><Spinner/>Loading account data...</p>;
     }
     else if (userInfo.detail) {
-        return <a href={`${API_URL}/oauth2/login?return_to=${location}`}>Login</a>;
+        return <a href={`${API_URL}/oauth2/login?return_to=${location}`}>
+          Log in with <Image src={discord_blurple} alt="Discord Logo" width="30" height="auto" style={{verticalAlign: "middle"}}/> to continue
+        </a>;
     }
     else {
         return (
@@ -98,9 +104,16 @@ function GetUserInfo() {
 
 export default function Home() {
   return (
-    <div style={{textAlign: "center"}}>
-      <h1>Hello World</h1>
-      <GetUserInfo />
+    <div style={{display: "flex", alignItems: "center", textAlign: "center", justifyContent: "center", flexDirection: "column", width: "100%"}}>
+      <div>
+        <h1>Spanner v3 Web Dashboard</h1>
+        <div style={{border: "2px solid red", padding: "1em", margin: "1em", backgroundColor: "#ff000033", borderRadius: "12px"}}>
+          <p>Neither this dashboard, nor the bot, are released yet.</p>
+          <p>Everything you see here is pre-release software.</p>
+          <p>You use this at your own risk.</p>
+        </div>
+        <GetUserInfo />
+      </div>
     </div>
   );
 }

@@ -1,10 +1,14 @@
 import * as util from '../../../util.js';
 import {useState, useEffect} from "react";
+import {Spinner} from "../../../page";
 
 export default function SettingsPage({guild}) {
+  if(!guild) {
+    return <Spinner/>
+  }
   return (
     <div>
-      <h1>Server information: {guild?.name}</h1>
+      <h1>Server information: {guild?.name || 'Unknown guild'}</h1>
       <div>Server ID: <code><pre>{guild?.id}</pre></code></div>
       {
         guild?.owner ? <p>You own this server.</p> : <p>You do not own this server.</p>

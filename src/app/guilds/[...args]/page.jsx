@@ -5,25 +5,16 @@ import InformationPage from "./components/information";
 import Link from "next/link";
 import './style.css';
 import {getDiscordGuildData} from "../../util";
+import {Spinner} from "../../page";
 
 function GuildSidebar({guild}) {
   return (
     <div className={"sidebar"}>
-      <div className={"sidebarButton"}>
-        <Link href={`/guilds/${guild.id}`}>ℹ️ Information</Link>
-      </div>
-      <div className={"sidebarButton"}>
-        <Link href={`/guilds/${guild.id}/settings`}>⚙️ Settings</Link>
-      </div>
-      <div className={"sidebarButton"}>
-        <Link href={`/guilds/${guild.id}/audit-log`}>📖 Audit Log</Link>
-      </div>
-      <div className={"sidebarButton"}>
-        <Link href={`/guilds/${guild.id}/starboard`}>⭐ Starboard</Link>
-      </div>
-      <div className={"sidebarButton"}>
-        <Link href={`/guilds/${guild.id}/self-roles`}>🖱️ Self-roles</Link>
-      </div>
+      <Link href={`/guilds/${guild.id}`} className={"sidebarButton"}>ℹ️ Information</Link>
+      <Link href={`/guilds/${guild.id}/settings`} className={"sidebarButton"}>⚙️ Settings</Link>
+      <Link href={`/guilds/${guild.id}/audit-log`} className={"sidebarButton"}>📖 Audit Log</Link>
+      <Link href={`/guilds/${guild.id}/starboard`} className={"sidebarButton"}>⭐ Starboard</Link>
+      <Link href={`/guilds/${guild.id}/self-roles`} className={"sidebarButton"}>🖱️ Self-roles</Link>
     </div>
   )
 }
@@ -34,7 +25,8 @@ export default class GuildPage extends Component {
     super(props);
     this.state = {
       page: "information",
-      guildData: {id: this.props.params.args[0]}
+      guildData: {id: this.props.params.args[0]},
+      loaded: false
     }
     if(this.props.params.args.length > 1) {
       this.state.page = this.props.params.args[1] || "information";
@@ -42,9 +34,16 @@ export default class GuildPage extends Component {
   }
 
   componentDidMount() {
-    getDiscordGuildData(this.props.params.args[0])
-      .then((data) => this.setState({guildData: data}))
-      .catch(console.error);
+    async function inner() {
+      try {
+        const data = await getDiscordGuildData(this.props.params.args[0]);
+        this.setState({guildData: data});
+      } catch(e) {
+        console.error(e);
+      }
+      this.setState({loaded: true});
+    }
+    inner.bind(this)().then().catch(console.error);
   }
 
   render() {
@@ -55,7 +54,7 @@ export default class GuildPage extends Component {
         case "settings":
           return <SettingsPage guild={this.state.guildData}/>
         default:
-          return <p>Unknown page</p>
+          return <p>Unknown page (not created yet?)</p>
       }
     }
 

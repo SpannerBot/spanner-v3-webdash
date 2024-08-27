@@ -1,11 +1,12 @@
 import * as util from '../../../util.js';
-import {useState, useEffect} from "react";
+import {useState, useEffect, Component} from "react";
+import {Spinner} from "../../../page";
 
 
 function NicknameModerationWidget({guild, nicknameConfig, setNickNameModeration}) {
   if(!nicknameConfig) {
     return (
-      <p>Nickname moderation is disabled. Use /settings nickname-filtering   to enable it!</p>
+      <p>Nickname moderation is disabled. Use /settings nickname-filtering to enable it!</p>
     )
   }
 
@@ -44,31 +45,19 @@ function NicknameModerationWidget({guild, nicknameConfig, setNickNameModeration}
   )
 }
 
-function LogFeaturesWidget({guild, features, setLogFeatures}) {
+function LogFeaturesWidget({guild, features}) {
   function onChange(e) {
     const key = e.target.parentElement.dataset.key;
     const enabled = e.target.checked;
     if(enabled) {
-      util.enableLoggingFeature(guild.id, key).then(
-        (result) => {
-          if(result) {
-            setLogFeatures(result);
-          }
-        }
-      ).catch(
+      util.enableLoggingFeature(guild.id, key).then().catch(
         (er) => {
           console.error(er);
           e.target.checked = !enabled;
         }
       );
     } else {
-      util.enableLoggingFeature(guild.id, key).then(
-        (result) => {
-          if(result) {
-            setLogFeatures(result);
-          }
-        }
-      ).catch(
+      util.enableLoggingFeature(guild.id, key).then().catch(
         (er) => {
           console.error(er);
           e.target.checked = !enabled;
@@ -76,81 +65,147 @@ function LogFeaturesWidget({guild, features, setLogFeatures}) {
       );
     }
   }
-
   if(!features) return <p>You do not have any log features enabled.</p>
+  else if (features.err) return <p>Failed to load log features: {features.err.message}</p>
   return (
     <div>
       <p>
         The following features are available for logging:
       </p>
-      <ul>
+      <div style={{display: "grid", gridTemplateColumns: "1fr 1fr"}}>
         {
           features.map((feature) => {
             return (
-              <li key={feature.id} data-key={feature.name}>
+              <div key={feature.id} data-key={feature.name}>
                 {feature.name}: <input type={"checkbox"} defaultChecked={feature.enabled} onChange={onChange}/>
-              </li>
+              </div>
             )
           })
         }
-      </ul>
+      </div>
     </div>
   )
 }
 
 
-export default function SettingsPage({guild}) {
-  const [loaded, setLoaded] = useState(false);
-  const [logChannel, setLogChannel] = useState(null);
-  const [nickNameModeration, setNickNameModeration] = useState(null)
-  const [logFeatures, setLogFeatures] = useState(null);
-  const [availableLogFeatures, setAvailableLogFeatures] = useState(null);
-  const [canAccess, setCanAccess] = useState(null);
-
-  useEffect(
-    () => {
-      if(loaded) return;
-      util.hasGuildPermissions(guild.id, 0x0).then(
-        (result) => {
-          if(!result) {
-            setCanAccess(false);
-            return;
-          }
-          setCanAccess(true)
-          util.getLoggingChannelID(guild.id)
-            .then((id) => util.getDiscordGuildChannel(guild.id, id)
-              .then((channel) => setLogChannel(channel))
-              .catch(console.error)
-            )
-            .catch(console.error);
-
-          util.getNicknameModerationConfig( guild.id).then(setNickNameModeration).catch(console.error);
-          util.getEnabledLoggingFeatures(guild.id).then(setLogFeatures).catch(console.error);
-          util.getAllLoggingFeatures(guild.id).then(setAvailableLogFeatures).catch(console.error);
-          setLoaded(true);
-        }
-      ).catch((e) => {console.error(e); setCanAccess(false);});
-    },
-    [guild, loaded, logChannel, nickNameModeration, logFeatures, availableLogFeatures, canAccess]
-  )
-  if(!canAccess) {
-    return <p>You do not have permission to view this page.</p>
+export default class SettingsPage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      hasAccess: null,
+      logChannel: null,
+      nickNameModeration: null,
+      logFeatures: [],
+      availableLogFeatures: [],
+      hasMounted: false
+    }
   }
-  return (
-    <div>
-      <h2>Server settings:</h2>
-      <h3>📖 Logging</h3>
-      <p>
-        Logging channel: {
-          logChannel
-            ? <a href={`https://discord.com/channels/${guild.id}/${logChannel.id}`}>#{logChannel.name}</a>
-            : <span>No logging channel set</span>
+
+  async checkPermissions() {
+    try {
+      this.setState({loading: true});
+      const result = await util.hasGuildPermissions(this.props.guild.id, 0x20);
+      this.setState({hasAccess: result, loaded: true});
+      return result;
+    } catch (e) {
+      console.error(e);
+      this.setState({hasAccess: false, loaded: true});
+      return false;
+    }
+  }
+
+  async loadLogChannel() {
+    try {
+      this.setState({loading: true});
+      const id = await util.getLoggingChannelID(this.props.guild.id);
+      const channel = await util.getDiscordGuildChannel(this.props.guild.id, id);
+      this.setState({logChannel: channel, loading: false});
+    } catch (e) {
+      console.error(e);
+      this.setState({logChannel: {err: e}, loading: false});
+    }
+  }
+
+  async loadNickNameModeration() {
+    try {
+      this.setState({loading: true});
+      const config = await util.getNicknameModerationConfig(this.props.guild.id);
+      this.setState({nickNameModeration: config, loading: false});
+    } catch (e) {
+      console.error(e);
+      this.setState({nickNameModeration: {err: e}, loading: false});
+    }
+  }
+
+  async loadLogFeatures() {
+    try {
+      this.setState({loading: true});
+      let enabledFeatures = await util.getEnabledLoggingFeatures(this.props.guild.id);
+      const allFeatures = await util.getAllLoggingFeatures(this.props.guild.id);
+      // Add any features from all features missing from enabled as [key]=false
+      for(let feature of allFeatures) {
+        if(!enabledFeatures.find((f) => f.id === feature.id)) {
+          enabledFeatures.push({id: null, name: feature, enabled: false});
         }
-      </p>
-      <LogFeaturesWidget guild={guild} features={logFeatures} setLogFeatures={setLogFeatures} allFeatures={availableLogFeatures}/>
-      <br/>
-      <h3>🖥️ AI Nickname Moderation</h3>
-      <NicknameModerationWidget guild={guild} nicknameConfig={nickNameModeration} setNickNameModeration={setNickNameModeration}/>
-    </div>
-  )
+      }
+      this.setState({logFeatures: enabledFeatures, loading: false});
+    } catch (e) {
+      console.error(e);
+      this.setState({logFeatures: {err: e}, loading: false});
+    }
+  }
+
+  async entryPoint() {
+    const ok = await this.checkPermissions();
+    if(ok) {
+      await this.loadLogChannel();
+      await this.loadNickNameModeration();
+      await this.loadLogFeatures();
+    }
+    this.setState({loading: false});
+  }
+  componentDidMount() {
+    if(this.state.hasMounted) return;
+    this.setState({hasMounted: true});
+    this.entryPoint().then().catch(console.error);
+  }
+
+  render() {
+    if(this.state.loading) {
+      return (
+        <div>
+          <Spinner/> Fetching data...
+        </div>
+      )
+    }
+    else if (this.state.hasAccess === false) {
+      return (
+        <div>
+          <p>You do not have access to this page. You require the <code>Manage Server</code> permission.</p>
+        </div>
+      )
+    }
+    else {
+      return (
+        <div>
+          <h2>Server settings:</h2>
+          <h3>📖 Logging</h3>
+          <p>
+            Logging channel: {
+            (this.state.logChannel && !this.state.logChannel.err)
+              ? <a href={`https://discord.com/channels/${this.props.guild.id}/${this.state.logChannel.id}`}>#{this.state.logChannel.name}</a>
+              : <span>No logging channel set</span>
+          }
+          </p>
+          <LogFeaturesWidget guild={this.props.guild} features={this.state.logFeatures} setLogFeatures={() => null }
+                             allFeatures={this.state.logFeatures}/>
+          <br/>
+          <h3>🖥️ AI Nickname Moderation</h3>
+          <NicknameModerationWidget guild={this.props.guild} nicknameConfig={this.state.nickNameModeration}
+                                    setNickNameModeration={() => null }/>
+        </div>
+      )
+    }
+  }
 }

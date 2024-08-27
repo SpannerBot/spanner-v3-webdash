@@ -74,7 +74,7 @@ export async function getEnabledLoggingFeatures(guild_id, enabled_only = null) {
     url += `?enabled=${enabled_only}`;
   }
   const response = await fetch(
-    url
+    url, {credentials: "include"}
   );
   if(!response.ok) {
     throw new Error("Failed to fetch enabled logging features");

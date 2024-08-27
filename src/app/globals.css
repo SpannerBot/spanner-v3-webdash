@@ -24,9 +24,34 @@ html, body {
     color: var(--text-active);
     height: 100%;
     width: 100%;
+    font-size: 16px
 }
 
 a {
     color: var(--text-link);
     text-decoration: none;
+}
+
+.spinner {
+    animation: _spinner 1s ease-in-out infinite;
+    display: inline-block;
+}
+
+.small {
+    font-size: 0.8rem;
+}
+.medium {
+    font-size: 1rem;
+}
+.large {
+    font-size: 1.2rem;
+}
+
+@keyframes _spinner {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }
