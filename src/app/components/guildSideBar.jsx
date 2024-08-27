@@ -74,7 +74,7 @@ export default class GuildSideBar extends Component {
       )
     }
     else {
-      this.state.guilds?.toSorted((a, b) => {}).map((guild) => {
+      inner = this.state.guilds?.toSorted((a, b) => {}).map((guild) => {
         return (
           <Link href={`/guilds/${guild.id}`} key={guild.id}>
             <Image
