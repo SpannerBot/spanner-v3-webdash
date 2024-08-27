@@ -12,7 +12,8 @@
     background-color: var(--background-secondary);
     padding: .5em;
     margin-right: 5px;
-    min-width: 20%
+    width: 20%;
+    min-width: 120px;
 }
 
 .sidebar .sidebarButton {

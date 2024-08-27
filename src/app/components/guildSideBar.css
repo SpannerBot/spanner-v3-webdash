@@ -1,5 +1,6 @@
 .guild-side-bar {
     width: 100%;
+    min-width: 60px;
     background-color: var(--background-tertiary);
     color: #dcddde;
     padding-top: .7em;
