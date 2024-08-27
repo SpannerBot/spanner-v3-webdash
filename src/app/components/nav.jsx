@@ -8,6 +8,9 @@ function Nav() {
           <Link href="/">Home</Link>
         </li>
       </ul>
+      <div>
+        <span>⚠️ This is pre-release software!</span>
+      </div>
     </nav>
   );
 }
