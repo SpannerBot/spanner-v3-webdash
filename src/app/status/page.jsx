@@ -46,7 +46,7 @@ function LatencyChart({history}) {
         time: date.toLocaleTimeString()
       };
     }
-    return Object.values(obj);
+    return Object.values(obj).toReversed();
   }
 
   return (
