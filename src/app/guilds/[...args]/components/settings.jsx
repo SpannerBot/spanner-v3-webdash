@@ -1,6 +1,5 @@
-import * as util from '../../../util.js';
+import * as util from '../../../util';
 import {useState, useEffect, Component} from "react";
-import {Spinner} from "../../../page";
 
 
 function NicknameModerationWidget({guild, nicknameConfig, setNickNameModeration}) {
@@ -175,7 +174,7 @@ export default class SettingsPage extends Component {
     if(this.state.loading) {
       return (
         <div>
-          <Spinner/> Fetching data...
+          <util.Spinner/> Fetching data...
         </div>
       )
     }

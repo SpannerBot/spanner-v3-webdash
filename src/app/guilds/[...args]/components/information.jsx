@@ -1,10 +1,9 @@
-import * as util from '../../../util.js';
+import * as util from '../../../util';
 import {useState, useEffect} from "react";
-import {Spinner} from "../../../page";
 
 export default function SettingsPage({guild}) {
   if(!guild) {
-    return <Spinner/>
+    return <util.Spinner/>
   }
   return (
     <div>

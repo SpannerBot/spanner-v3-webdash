@@ -3,13 +3,10 @@ import {useEffect, useState} from "react";
 import GuildSelect from "./components/guildSelect.jsx";
 import Image from "next/image";
 import discord_blurple from '../../public/discordblurple.png';
+import * as util from "./util";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
 console.log("Using backend: %s", API_URL)
-
-export const Spinner = () => {
-  return <span className={"spinner large"}>⌛&nbsp;</span>
-}
 
 async function loadGuilds() {
   const response = await fetch(`${API_URL}/_discord/users/@me/guilds`, {credentials: "include"});
@@ -39,7 +36,7 @@ function UserGuildsArray() {
         }, [guilds]
     )
     if (!guilds ) {
-        return <p><Spinner/>Loading guilds...</p>;
+        return <p><util.Spinner/>Loading guilds...</p>;
     }
     else if (guilds.detail) {
         return <p>Not logged in: {guilds.detail}</p>;
@@ -56,7 +53,7 @@ function Avatar({ url, id }) {
     const index = (id >> 22) % 6;
     setSrc(`https://cdn.discordapp.com/embed/avatars/${index}.png`);
   }
-  return <img src={url} alt="avatar" style={{borderRadius:"50%",height:"32px",width:"32px",verticalAlign:"middle"}}/>;
+  return <Image src={url} alt="avatar" style={{borderRadius:"50%",height:"32px",width:"32px",verticalAlign:"middle"}} width={32} height={32}/>;
 }
 
 
@@ -84,7 +81,7 @@ function GetUserInfo() {
         }, [userInfo]
     )
     if (userInfo === null) {
-        return <p><Spinner/>Loading account data...</p>;
+        return <p><util.Spinner/>Loading account data...</p>;
     }
     else if (userInfo.detail) {
         return <a href={`${API_URL}/oauth2/login?return_to=${location}`}>

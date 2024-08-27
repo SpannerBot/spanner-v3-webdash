@@ -1,5 +1,9 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
 
+export const Spinner = () => {
+  return <span className={"spinner large"}>⌛&nbsp;</span>
+}
+
 
 export async function getPresence(guild_id) {
   const response = await fetch(

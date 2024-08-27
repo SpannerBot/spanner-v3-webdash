@@ -5,7 +5,6 @@ import InformationPage from "./components/information";
 import Link from "next/link";
 import './style.css';
 import {getDiscordGuildData} from "../../util";
-import {Spinner} from "../../page";
 
 function GuildSidebar({guild}) {
   return (
