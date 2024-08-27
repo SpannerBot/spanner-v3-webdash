@@ -3,7 +3,7 @@ import {API_URL, Spinner} from "../util";
 import useSWR from "swr";
 import * as util from "../util";
 import './style.css';
-import { Avatar } from "../page";
+import {Avatar} from "../util";
 
 function fetcher(url) {
   return util.withBackoff(async () => fetch(url), 2, 1500)

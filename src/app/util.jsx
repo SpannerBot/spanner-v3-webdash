@@ -1,5 +1,7 @@
 import Icon from '@mdi/react';
 import { mdiLoading } from '@mdi/js';
+import {useState} from "react";
+import Image from "next/image";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
 export const BOT_SOURCE_URL = process.env.NEXT_PUBLIC_BOT_SOURCE_URL || "https://github.com/nexy7574/spanner-v3";
@@ -307,4 +309,14 @@ export const humaniseSeconds = (seconds) => {
   if(minutes) parts.push(`${minutes}m`);
   if(seconds) parts.push(`${seconds}s`);
   return parts.join(" ");
+}
+
+export function Avatar({ url, id }) {
+  const [src, setSrc] = useState(url);
+  const def = `https://cdn.discordapp.com/embed/avatars/${(id >> 22) % 6}.png`
+  const onError = (e) => {
+    console.error(e);
+    setSrc(def);
+  }
+  return <Image src={src || def} alt="avatar" onError={onError} style={{borderRadius:"50%",height:"32px",width:"32px",verticalAlign:"middle"}} width={32} height={32}/>;
 }
