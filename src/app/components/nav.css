@@ -8,6 +8,7 @@
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 5vh
 }
 
 .navbar ul {
@@ -17,5 +18,12 @@
 
 .navbar ul li {
     margin-right: 1rem;
+}
+
+.icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    vertical-align: middle;
 }
 

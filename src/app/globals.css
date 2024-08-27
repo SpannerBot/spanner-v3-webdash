@@ -1,6 +1,7 @@
 :root {
     --background-primary: #313338;
     --background-secondary: #2A2D31;
+    --background-tertiary: #1D1E21;
     --text-active: #dddadd;
     --text-muted: #72767d;
     --text-link: #006ce7;
@@ -22,7 +23,6 @@ html, body {
     font-family: 'Whitney', 'Roboto', sans-serif;
     background-color: var(--background-primary);
     color: var(--text-active);
-    height: 100%;
     width: 100%;
     font-size: 16px
 }
@@ -54,4 +54,12 @@ a {
     100% {
         transform: rotate(360deg);
     }
+}
+
+.main-content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto 1fr;
+    grid-template-areas: "header header" "sidebar content";
+    height: 100%;
 }

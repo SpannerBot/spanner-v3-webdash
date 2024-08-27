@@ -1,0 +1,34 @@
+.guild-side-bar {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 93vh;
+    background-color: var(--background-tertiary);
+    color: #dcddde;
+    padding: .2em;
+    margin-right: 1em;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    overflow-y: scroll;
+}
+
+.guild-side-bar-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin: 0 auto;
+    background-color: #36393f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 30px;
+    color: #dcddde;
+}
+
+.absent {
+    filter: grayscale(90%);
+    transition: filter 0.5s;
+}
+
+.absent:hover {
+    filter: grayscale(0%);
+}

@@ -92,7 +92,7 @@ function GetUserInfo() {
         return (
           <div>
             <p>Logged in as: <Avatar url={userInfo.avatar_url}/> {userInfo.username}</p>
-            <UserGuildsArray />
+            <p>Select a server from the sidebar to get started!</p>
           </div>
         )
     }

@@ -1,7 +1,7 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
 
 export const Spinner = () => {
-  return <span className={"spinner large"}>⌛&nbsp;</span>
+  return <span className={"spinner large"}>⌛</span>
 }
 
 
@@ -223,4 +223,24 @@ export async function hasGuildPermissions(guild_id, value) {
   }
   const permissions = await response.json();
   return (permissions & value) === value;
+}
+
+export async function checkAPIHealth() {
+  const response = await fetch(
+    `${API_URL}/healthz`
+  );
+  return response.ok && (await response.json()).status === "ok";
+}
+
+
+export async function processedGuilds() {
+  let data = await getUserGuilds();
+  data.sort((g1, g2) => g1.name.localeCompare(g2.name));
+  for(let guild of data) {
+    const presenceResponse = await fetch(`${API_URL}/config/${guild.id}/presence`);
+    guild.present = presenceResponse.ok;
+  }
+  // put present guilds first
+  data.sort((g1, g2) => g2.present - g1.present);
+  return data;
 }

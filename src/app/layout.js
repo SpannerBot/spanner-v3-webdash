@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import Nav from "./components/nav";
+import GuildSideBar from "./components/guildSideBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -11,7 +12,10 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={inter.className}>
         <Nav/>
-        {children}
+        <div className={"main-content"}>
+          <GuildSideBar/>
+          {children}
+        </div>
       </body>
     </html>
   );

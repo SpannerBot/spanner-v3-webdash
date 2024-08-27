@@ -33,7 +33,7 @@ function NicknameModerationWidget({guild, nicknameConfig, setNickNameModeration}
             const enabled = nicknameConfig[key];
             if(key==="id") return null;
             return (
-              <li key={key} data-key={key}>
+              <li key={key || Math.random().toString()} data-key={key}>
                 {key}: <input type={"checkbox"} defaultChecked={enabled} onChange={onChange}/>
               </li>
             )
@@ -75,7 +75,7 @@ function LogFeaturesWidget({guild, features}) {
         {
           features.map((feature) => {
             return (
-              <div key={feature.id} data-key={feature.name}>
+              <div key={feature.id || feature.name} data-key={feature.name}>
                 {feature.name}: <input type={"checkbox"} defaultChecked={feature.enabled} onChange={onChange}/>
               </div>
             )
@@ -156,11 +156,18 @@ export default class SettingsPage extends Component {
   }
 
   async entryPoint() {
+    console.debug("Checking guild permissions...")
     const ok = await this.checkPermissions();
     if(ok) {
+      console.debug("Guild permissions OK. Fetching log channel.");
       await this.loadLogChannel();
+      console.debug("Fetching nickname moderation config...");
       await this.loadNickNameModeration();
+      console.debug("Fetching log features...");
       await this.loadLogFeatures();
+      console.debug("Done");
+    } else {
+      console.debug("No permissions, skipping loading of log channel, nickname moderation, and log features.")
     }
     this.setState({loading: false});
   }
