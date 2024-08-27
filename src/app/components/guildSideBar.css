@@ -1,14 +1,15 @@
 .guild-side-bar {
-    display: flex;
-    flex-direction: column;
     width: 100%;
-    height: 93vh;
     background-color: var(--background-tertiary);
     color: #dcddde;
     padding: .2em;
     margin-right: 1em;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     overflow-y: scroll;
+    height: 95vh;
+}
+.guild-side-bar-inner {
+    display: flex;
+    flex-direction: column;
 }
 
 .guild-side-bar-icon {

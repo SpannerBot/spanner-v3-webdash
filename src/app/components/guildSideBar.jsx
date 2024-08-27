@@ -3,6 +3,7 @@ import * as util from "../util";
 import './guildSideBar.css'
 import Link from "next/link";
 import Image from "next/image";
+import {Spinner} from "../util";
 
 function defaultGuildIconURL(id) {
   return `https://cdn.discordapp.com/embed/avatars/${id % 6}.png`;
@@ -36,6 +37,15 @@ export default class GuildSideBar extends Component {
   render() {
     function onError(e) {
       e.target.src = defaultGuildIconURL(e.target.dataset.guild_id || 1);
+    }
+    if(!this.state.loaded || !this.state.guilds) {
+      return (
+        <div className={"guild-side-bar"}>
+          <div className={"guild-side-bar-inner"}>
+            <Spinner size={2}/>
+          </div>
+        </div>
+      )
     }
 
     return (

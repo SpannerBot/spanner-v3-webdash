@@ -1,50 +1,8 @@
 "use client";
 import {useEffect, useState} from "react";
-import GuildSelect from "./components/guildSelect.jsx";
 import Image from "next/image";
 import discord_blurple from '../../public/discordblurple.png';
 import * as util from "./util";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
-console.log("Using backend: %s", API_URL)
-
-async function loadGuilds() {
-  const response = await fetch(`${API_URL}/_discord/users/@me/guilds`, {credentials: "include"});
-  if (!response.ok) {
-      return {detail: response.statusText};
-  }
-  // Check which guilds we're in
-  let data = await response .json();
-  data.sort((g1, g2) => g1.name.localeCompare(g2.name));
-  for(let guild of data) {
-    const presenceResponse = await fetch(`${API_URL}/config/${guild.id}/presence`);
-    guild.present = presenceResponse.ok;
-  }
-  // put present guilds first
-  data.sort((g1, g2) => g2.present - g1.present);
-  return data;
-}
-
-
-function UserGuildsArray() {
-    const [guilds, setGuilds] = useState(null);
-
-    useEffect(
-        () => {
-          if(!!guilds) return;
-          loadGuilds().catch(console.error).then(setGuilds);
-        }, [guilds]
-    )
-    if (!guilds ) {
-        return <p><util.Spinner/>Loading guilds...</p>;
-    }
-    else if (guilds.detail) {
-        return <p>Not logged in: {guilds.detail}</p>;
-    }
-    else {
-        return <GuildSelect guilds={guilds} />;
-    }
-}
 
 function Avatar({ url, id }) {
   const [src, setSrc] = useState(url);
@@ -74,18 +32,21 @@ function GetUserInfo() {
               }
             }
           )
-          fetch(`${API_URL}/_discord/users/@me`, {credentials: "include"})
-            .then((response) => response.json())
-            .then((data) => setUserInfo(data))
-            .catch((error) => {setUserInfo({detail: error.message})})
+          // fetch(`${API_URL}/_discord/users/@me`, {credentials: "include"})
+          //   .then((response) => response.json())
+          //   .then((data) => setUserInfo(data))
+          //   .catch((error) => {setUserInfo({detail: error.message})})
+          util.getLoggedInUser().then(setUserInfo).catch((error) => {setUserInfo({detail: error.message})});
         }, [userInfo]
     )
     if (userInfo === null) {
         return <p><util.Spinner/>Loading account data...</p>;
     }
     else if (userInfo.detail) {
-        return <a href={`${API_URL}/oauth2/login?return_to=${location}`}>
-          Log in with <Image src={discord_blurple} alt="Discord Logo" width="30" height="auto" style={{verticalAlign: "middle"}}/> to continue
+        return <a href={`${util.API_URL}/oauth2/login?return_to=${location}`}>
+          Log in with
+          <Image src={discord_blurple} alt="Discord" title="Discord" width={30} height="auto" style={{verticalAlign: "middle"}}/>
+          to continue
         </a>;
     }
     else {

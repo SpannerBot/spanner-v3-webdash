@@ -1,7 +1,23 @@
 import * as util from '../../../util';
+import Link from "next/link";
 import {useState, useEffect} from "react";
 
-export default function SettingsPage({guild}) {
+export default function InformationPage({guild}) {
+  if(!guild.present) {
+    return (
+      <div>
+        <h1>Server not found</h1>
+        <p>The server you are looking for could not be found.</p>
+        <br/>
+        <p>
+          Did you want
+          to <Link
+            href={`${util.API_URL}/oauth2/invite?guild_id=${guild?.id}&return_to=${location}`}
+            >invite Spanner?</Link>
+        </p>
+      </div>
+    )
+  }
   if(!guild.name) {
     return (
       <div>

@@ -4,7 +4,8 @@ import SettingsPage from "./components/settings";
 import InformationPage from "./components/information";
 import Link from "next/link";
 import './style.css';
-import {getDiscordGuildData} from "../../util";
+import {getDiscordGuildData, Spinner} from "../../util";
+import * as util from "../../util";
 
 function GuildSidebar({guild}) {
   return (
@@ -40,6 +41,13 @@ export default class GuildPage extends Component {
       } catch(e) {
         console.error(e);
       }
+      try {
+        const present = await util.getPresence(this.props.params.args[0]);
+        this.setState({guildData: {...this.state.guildData, present}});
+      }
+      catch(e) {
+        console.error(e);
+      }
       this.setState({loaded: true});
     }
     inner.bind(this)().then().catch(console.error);
@@ -55,6 +63,21 @@ export default class GuildPage extends Component {
         default:
           return <p>Unknown page (not created yet?)</p>
       }
+    }
+    if(!this.state.loaded) return <div><Spinner/></div>
+
+    if(!this.state.guildData.present) {
+      return (
+        <div className={"home"}>
+          <h1>Server not found</h1>
+          <p>The server you are looking for could not be found.</p>
+          <br/>
+          <p>
+            Did you want to
+            <Link href={`${util.API_URL}/oauth2/invite?guild_id=${this.state.guildData?.id}`}>invite Spanner?</Link>
+          </p>
+        </div>
+      )
     }
 
     return (

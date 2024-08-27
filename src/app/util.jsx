@@ -1,7 +1,13 @@
+import Icon from '@mdi/react';
+import { mdiLoading } from '@mdi/js';
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
+export const BOT_SOURCE_URL = process.env.NEXT_PUBLIC_BOT_SOURCE_URL || "https://github.com/nexy7574/spanner-v3";
+export const WEB_SOURCE_URL = process.env.NEXT_PUBLIC_WEB_SOURCE_URL || "https://github.com/nexy7574/spanner-v3-webdash";
+export const DISCORD_INVITE = process.env.NEXT_PUBLIC_DISCORD_INVITE || "https://discord.gg/TveBeG7";
 
-export const Spinner = () => {
-  return <span className={"spinner large"}>⌛</span>
+export const Spinner = (props) => {
+  // return <span className={"spinner large"}>⌛</span>
+  return <Icon path={mdiLoading} size={props.size || 1} className={"spinner large"}/>
 }
 
 

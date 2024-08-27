@@ -13,6 +13,7 @@
     :root {
         --background-primary: #FFFFFF;
         --background-secondary: #F2F3F5;
+        --background-tertiary: #E3E5E8;
         --text-active: #000;
     }
 }
@@ -35,6 +36,8 @@ a {
 .spinner {
     animation: _spinner 1s ease-in-out infinite;
     display: inline-block;
+    vertical-align: middle;
+    color: var(--text-muted)
 }
 
 .small {
