@@ -4,14 +4,14 @@ import Image from "next/image";
 import discord_blurple from '../../public/discordblurple.png';
 import * as util from "./util";
 
-function Avatar({ url, id }) {
+export function Avatar({ url, id }) {
   const [src, setSrc] = useState(url);
+  const def = `https://cdn.discordapp.com/embed/avatars/${(id >> 22) % 6}.png`
   const onError = (e) => {
     console.error(e);
-    const index = (id >> 22) % 6;
-    setSrc(`https://cdn.discordapp.com/embed/avatars/${index}.png`);
+    setSrc(def);
   }
-  return <Image src={url} alt="avatar" style={{borderRadius:"50%",height:"32px",width:"32px",verticalAlign:"middle"}} width={32} height={32}/>;
+  return <Image src={src || def} alt="avatar" onError={onError} style={{borderRadius:"50%",height:"32px",width:"32px",verticalAlign:"middle"}} width={32} height={32}/>;
 }
 
 

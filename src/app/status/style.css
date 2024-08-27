@@ -1,0 +1,19 @@
+:root {
+    --warning-border: #FEE75C;
+    --warning-background: #FEE75CAA;
+    --error-border: #ED4245;
+    --error-background: #ED4245AA;
+}
+.warningBox {
+    border: 1px solid var(--warning-border);
+    background-color: var(--warning-background);
+    border-radius: 2em;
+    padding: 2em
+}
+
+.errorBox {
+    border: 1px solid var(--error-border);
+    background-color: var(--error-background);
+    border-radius: 2em;
+    padding: 2em
+}

@@ -227,6 +227,9 @@ export async function getUserGuilds() {
     `${API_URL}/_discord/users/@me/guilds`,
     {credentials: "include"}
   )
+  if(response.status === 403) {
+    return {detail: "LOGIN_REQUIRED"}
+  }
   if(response.status === 429) {
     const retry_after = response.headers.get("Retry-After");
     console.warn("Rate limited, retrying after %d seconds", retry_after);
@@ -278,6 +281,9 @@ export async function checkAPIHealth() {
 
 export async function processedGuilds() {
   let data = await getUserGuilds();
+  if(data.detail === "LOGIN_REQUIRED") {
+    return data;
+  }
   data.sort((g1, g2) => g1.name.localeCompare(g2.name));
   for(let guild of data) {
     const presenceResponse = await fetch(`${API_URL}/config/${guild.id}/presence`);
@@ -286,4 +292,19 @@ export async function processedGuilds() {
   // put present guilds first
   data.sort((g1, g2) => g2.present - g1.present);
   return data;
+}
+
+export const humaniseSeconds = (seconds) => {
+  let days = Math.floor(seconds / 86400);
+  seconds -= days * 86400;
+  let hours = Math.floor(seconds / 3600);
+  seconds -= hours * 3600;
+  let minutes = Math.floor(seconds / 60);
+  seconds -= minutes * 60;
+  let parts = [];
+  if(days) parts.push(`${days}d`);
+  if(hours) parts.push(`${hours}h`);
+  if(minutes) parts.push(`${minutes}m`);
+  if(seconds) parts.push(`${seconds}s`);
+  return parts.join(" ");
 }

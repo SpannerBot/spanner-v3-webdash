@@ -2,7 +2,7 @@
     width: 100%;
     background-color: var(--background-tertiary);
     color: #dcddde;
-    padding: .2em;
+    padding-top: .7em;
     margin-right: 1em;
     overflow-y: scroll;
     height: 95vh;
