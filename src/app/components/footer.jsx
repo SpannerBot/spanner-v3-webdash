@@ -1,6 +1,6 @@
 import './footer.css';
 import Link from "next/link";
-import {API_URL, DISCORD_INVITE, BOT_SOURCE_URL} from "../util";
+import {API_URL, DISCORD_INVITE, BOT_SOURCE_URL, WEB_SOURCE_URL} from "../util";
 
 export default function Footer() {
   return (
@@ -33,7 +33,7 @@ export default function Footer() {
                 <Link href={BOT_SOURCE_URL}>Bot</Link>
               </li>
               <li>
-                <Link href={BOT_SOURCE_URL}>Website</Link>
+                <Link href={WEB_SOURCE_URL}>Website</Link>
               </li>
               <li>
                 <Link href={BOT_SOURCE_URL + "/blob/dev/LICENSE"}>License (AGPL-3)</Link>

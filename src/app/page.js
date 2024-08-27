@@ -21,33 +21,23 @@ function GetUserInfo() {
     useEffect(
         () => {
           if(!!userInfo) return;
-          document.addEventListener(
-            "keypress",
-            (e) => {
-              if(e.key === "t") {
-                const token = prompt("Enter your session token");
-                if(!token) return;
-                document.cookie = `session=${token}; SameSite=Lax`;
-                location.reload();
-              }
-            }
-          )
-          // fetch(`${API_URL}/_discord/users/@me`, {credentials: "include"})
-          //   .then((response) => response.json())
-          //   .then((data) => setUserInfo(data))
-          //   .catch((error) => {setUserInfo({detail: error.message})})
-          util.getLoggedInUser().then(setUserInfo).catch((error) => {setUserInfo({detail: error.message})});
+          util.withBackoff(util.getLoggedInUser, 3)
+            .then(setUserInfo)
+            .catch((error) => {setUserInfo({detail: error.message})});
         }, [userInfo]
     )
     if (userInfo === null) {
         return <p><util.Spinner/>Loading account data...</p>;
     }
-    else if (userInfo.detail) {
+    else if (userInfo.detail === "Not logged in") {
         return <a href={`${util.API_URL}/oauth2/login?return_to=${location}`}>
           Log in with
           <Image src={discord_blurple} alt="Discord" title="Discord" width={30} height="auto" style={{verticalAlign: "middle"}}/>
           to continue
         </a>;
+    }
+    else if (userInfo.detail) {
+        return <p>Error checking login status: <code>{userInfo.detail}</code>. Try clearing your cookies.</p>;
     }
     else {
         return (

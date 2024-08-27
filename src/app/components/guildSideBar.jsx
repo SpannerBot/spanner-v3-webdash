@@ -4,6 +4,8 @@ import './guildSideBar.css'
 import Link from "next/link";
 import Image from "next/image";
 import {Spinner} from "../util";
+import Icon from '@mdi/react';
+import { mdiCloudOffOutline } from '@mdi/js';
 
 function defaultGuildIconURL(id) {
   return `https://cdn.discordapp.com/embed/avatars/${id % 6}.png`;
@@ -25,7 +27,17 @@ export default class GuildSideBar extends Component {
   }
 
   async getGuilds() {
-    const guilds = await util.processedGuilds();
+    let guilds;
+    try {
+      guilds = await util.withBackoff(async () => util.processedGuilds());
+    } catch (e) {
+      console.error(e);
+      guilds = [
+        {
+          id: -1,
+        }
+      ];
+    }
     this.setState({guilds});
   }
 
@@ -43,6 +55,16 @@ export default class GuildSideBar extends Component {
         <div className={"guild-side-bar"}>
           <div className={"guild-side-bar-inner"}>
             <Spinner size={2}/>
+          </div>
+        </div>
+      )
+    }
+
+    if(this.state.guilds[0].id === -1) {
+      return (
+        <div className={"guild-side-bar"}>
+          <div className={"guild-side-bar-inner"}>
+            <Icon path={mdiCloudOffOutline} size={2} className={"large"} color={"#f77"}/>
           </div>
         </div>
       )

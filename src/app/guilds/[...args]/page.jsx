@@ -64,11 +64,12 @@ export default class GuildPage extends Component {
           return <p>Unknown page (not created yet?)</p>
       }
     }
-    if(!this.state.loaded) return <div><Spinner/></div>
+    let subPage;
+    if(!this.state.loaded) {subPage = <div><Spinner/></div>}
 
-    if(!this.state.guildData.present) {
-      return (
-        <div className={"home"}>
+    else if(!this.state.guildData.present) {
+      subPage = (
+        <div>
           <h1>Server not found</h1>
           <p>The server you are looking for could not be found.</p>
           <br/>
@@ -79,11 +80,14 @@ export default class GuildPage extends Component {
         </div>
       )
     }
+    else {
+      subPage = <PageRender _page={this.state.page}/>
+    }
 
     return (
       <main className={"home"}>
         <GuildSidebar page={this.state.page} setPage={(page) => this.setState({page})} guild={this.state.guildData}/>
-        <PageRender _page={this.state.page}/>
+        {subPage}
       </main>
     )
   }

@@ -26,7 +26,7 @@
 }
 
 .absent {
-    filter: grayscale(90%);
+    filter: grayscale(95%);
     transition: filter 0.5s;
 }
 

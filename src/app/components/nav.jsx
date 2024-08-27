@@ -5,6 +5,8 @@ import Image from "next/image";
 import {useState, useEffect} from "react";
 import {API_URL} from "../util";
 import useSWR from "swr";
+import Icon from '@mdi/react';
+import { mdiAlert } from '@mdi/js';
 
 const fetcher = (url) => fetch(url).then((res) => res.json());
 
@@ -16,7 +18,24 @@ export function StatusWidget() {
       refreshInterval: 10000
     }
   );
-  if(error || (data && data.status !== "ok")) return <p style={{color: "var(--danger)"}}>⚠️ API is unreachable!</p>;
+  let result=null;
+  if(data || error) {
+    if(error) {
+      result = "API is unreachable!";
+    }
+    else {
+      if(!data.online) {
+        result = "Spanner is offline!"
+      }
+      else if (data.guilds?.unavailable.length > 0) {
+        result = `${data.guilds.unavailable.length} guilds are unavailable!`;
+      }
+    }
+  }
+
+  if(result) {
+    return <span style={{color: "var(--danger)"}}><Icon size={1} path={mdiAlert} style={{verticalAlign: "middle"}}/> {result}</span>
+  }
   return null;
 }
 
@@ -31,7 +50,7 @@ function Nav() {
         </Link>
       </div>
       <div>
-        <p>⚠️ This is pre-release software!</p>
+        <p><Icon size={1} path={mdiAlert} style={{verticalAlign: "middle"}}/> This is pre-release software!</p>
         <StatusWidget />
       </div>
     </nav>

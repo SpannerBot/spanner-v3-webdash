@@ -117,8 +117,8 @@ export default class SettingsPage extends Component {
   async loadLogChannel() {
     try {
       this.setState({loading: true});
-      const id = await util.getLoggingChannelID(this.props.guild.id);
-      const channel = await util.getDiscordGuildChannel(this.props.guild.id, id);
+      const id = await util.withBackoff(async () => util.getLoggingChannelID(this.props.guild.id));
+      const channel = await util.withBackoff(async () => util.getDiscordGuildChannel(this.props.guild.id, id));
       this.setState({logChannel: channel, loading: false});
     } catch (e) {
       console.error(e);

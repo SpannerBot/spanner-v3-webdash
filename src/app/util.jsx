@@ -1,5 +1,6 @@
 import Icon from '@mdi/react';
 import { mdiLoading } from '@mdi/js';
+
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
 export const BOT_SOURCE_URL = process.env.NEXT_PUBLIC_BOT_SOURCE_URL || "https://github.com/nexy7574/spanner-v3";
 export const WEB_SOURCE_URL = process.env.NEXT_PUBLIC_WEB_SOURCE_URL || "https://github.com/nexy7574/spanner-v3-webdash";
@@ -8,6 +9,36 @@ export const DISCORD_INVITE = process.env.NEXT_PUBLIC_DISCORD_INVITE || "https:/
 export const Spinner = (props) => {
   // return <span className={"spinner large"}>⌛</span>
   return <Icon path={mdiLoading} size={props.size || 1} className={"spinner large"}/>
+}
+
+
+export async function withBackoff(call, max_retries=5, max_sleep=5000) {
+  let retries = 0;
+  let errors = [];
+  while(retries < max_retries) {
+    try {
+      return await call();
+    } catch(e) {
+      console.error(e);
+      if(!errors.includes(e.message)) errors.push(e.message);
+      let sleep = (2 ** retries) * 1000;
+      if(sleep > max_sleep) {
+        sleep = max_sleep;
+      }
+      console.warn(
+        "Failed to call function %s, retrying in %d seconds (%d milliseconds). Retry %d/%d",
+        call.name || "anonymous",
+        sleep / 1000,
+        sleep,
+        retries,
+        max_retries
+      );
+      await new Promise((resolve) => setTimeout(resolve, sleep));
+      retries++;
+    }
+  }
+  console.debug("Failed to call function after max retries, giving up.");
+  throw new Error("Failed to call function after max retries with errors: " + errors.join(", "));
 }
 
 
@@ -23,6 +54,7 @@ export async function getNicknameModerationConfig(guild_id) {
     `${API_URL}/config/${guild_id}/nickname-moderation`,
     {credentials: "include"}
   );
+  if(response.status===404) return null;
   if(!response.ok) {
     throw new Error("Failed to fetch nickname moderation config");
   }
@@ -62,6 +94,7 @@ export async function getLoggingChannelID(guild_id) {
   const response = await fetch(
     `${API_URL}/config/${guild_id}/logging/channel`
   );
+  if(response.status===404) return null;
   if(!response.ok) {
     throw new Error("Failed to fetch logging channel ID");
   }
@@ -86,6 +119,7 @@ export async function getEnabledLoggingFeatures(guild_id, enabled_only = null) {
   const response = await fetch(
     url, {credentials: "include"}
   );
+  if(response.status === 404) return null;
   if(!response.ok) {
     throw new Error("Failed to fetch enabled logging features");
   }
@@ -173,6 +207,9 @@ export async function getLoggedInUser() {
     `${API_URL}/_discord/users/@me`,
     {credentials: "include"}
   )
+  if(response.status === 403) {
+    return {detail: "Not logged in"};
+  }
   if(response.status === 429) {
     const retry_after = response.headers.get("Retry-After");
     console.warn("Rate limited, retrying after %d seconds", retry_after);
