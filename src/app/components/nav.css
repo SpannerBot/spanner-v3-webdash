@@ -7,7 +7,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 5vh
+    height: 5vh;
+    border-bottom: 1px black;
 }
 
 .navbar ul {
@@ -18,11 +19,3 @@
 .navbar ul li {
     margin-right: 1rem;
 }
-
-.icon {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    vertical-align: middle;
-}
-

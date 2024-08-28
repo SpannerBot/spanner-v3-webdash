@@ -4,13 +4,13 @@ import {useState} from "react";
 import Image from "next/image";
 
 export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1237";
-export const BOT_SOURCE_URL = process.env.NEXT_PUBLIC_BOT_SOURCE_URL || "https://github.com/nexy7574/spanner-v3";
-export const WEB_SOURCE_URL = process.env.NEXT_PUBLIC_WEB_SOURCE_URL || "https://github.com/nexy7574/spanner-v3-webdash";
+export const BOT_SOURCE_URL = process.env.NEXT_PUBLIC_BOT_SOURCE_URL || "https://github.com/SpannerBot/spanner-v3";
+export const WEB_SOURCE_URL = process.env.NEXT_PUBLIC_WEB_SOURCE_URL || "https://github.com/SpannerBot/spanner-v3-webdash";
+export const DOCS_SOURCE_URL = process.env.NEXT_PUBLIC_WEB_SOURCE_URL || "https://github.com/SpannerBot/spanner-v3-webdash";
 export const DISCORD_INVITE = process.env.NEXT_PUBLIC_DISCORD_INVITE || "https://discord.gg/TveBeG7";
 
 export const Spinner = (props) => {
-  // return <span className={"spinner large"}>⌛</span>
-  return <Icon path={mdiLoading} size={props.size || 1} className={"spinner large"}/>
+  return <Icon path={mdiLoading} size={props.size || 1} className={"spinner text-xl"}/>
 }
 
 
@@ -131,18 +131,18 @@ export async function getEnabledLoggingFeatures(guild_id, enabled_only = null) {
 export async function enableLoggingFeature(guild_id, key) {
   const response = await fetch(
     `${API_URL}/config/${guild_id}/logging/features/${key}`,
-    {method: "PUT", credentials: "include", body: '{"enabled":true}'}
+    {method: "PUT", credentials: "include", body: '{"enabled":true}', headers: {"Content-Type": "application/json"}}
   );
   if(!response.ok) {
     throw new Error("Failed to enable logging feature");
-  }
+  } 
   return await response.json();
 }
 
 export async function disableLoggingFeature(guild_id, key) {
   const response = await fetch(
     `${API_URL}/config/${guild_id}/logging/features/${key}`,
-    {method: "PUT", credentials: "include", body: '{"enabled":false}'}
+    {method: "PUT", credentials: "include", body: '{"enabled":false}', headers: {"Content-Type": "application/json"}}
   );
   if(!response.ok) {
     throw new Error("Failed to disable logging feature");
@@ -319,7 +319,7 @@ export function Avatar({ url, id }) {
     console.error(e);
     setSrc(def);
   }
-  return <Image src={src || def} alt="avatar" onError={onError} style={{borderRadius:"50%",height:"32px",width:"32px",verticalAlign:"middle"}} width={32} height={32}/>;
+  return <Image src={src || def} alt="avatar" onError={onError} className={"avatar"} width={32} height={32}/>;
 }
 
 export async function hasSession() {

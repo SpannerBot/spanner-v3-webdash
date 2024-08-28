@@ -3,13 +3,20 @@ import * as utils from '../../../util';
 import { useEffect } from 'react';
 
 function AuditLogEntry({entry}) {
+  if(entry.version <= 2) {
+    return (
+      <div className={"auditLogEntry"}>
+        <p style={{fontSize: "smaller"}}><i>Audit log entry is too old to display.</i></p>
+      </div>
+    )
+  }
   const createdAt = new Date(entry.created_at);
   return (
     <div className={"auditLogEntry"}>
       <details>
         <summary>[{entry.namespace}] <strong>{entry.author}</strong> {entry.action}</summary>
         <p>{entry.description}</p>
-        <p className={"small"}>ID: <code>{entry.id}</code> | {createdAt.toLocaleDateString()} at {createdAt.toLocaleTimeString()}</p>
+        <p className={"text-sm"}>ID: <code>{entry.id}</code> | {createdAt.toLocaleDateString()} at {createdAt.toLocaleTimeString()}</p>
       </details>
     </div>
   )

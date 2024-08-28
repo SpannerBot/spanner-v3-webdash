@@ -7,15 +7,32 @@ import Link from "next/link";
 import './style.css';
 import {getDiscordGuildData, Spinner} from "../../util";
 import * as util from "../../util";
+import Icon from '@mdi/react';
+import { mdiInformationBox, mdiCog, mdiScriptText, mdiStarCog, mdiAccountBox } from '@mdi/js';
 
 function GuildSidebar({guild}) {
   return (
     <div className={"sidebar"}>
-      <Link href={`/guilds/${guild.id}`} className={"sidebarButton"}>ℹ️ Information</Link>
-      <Link href={`/guilds/${guild.id}/settings`} className={"sidebarButton"}>⚙️ Settings</Link>
-      <Link href={`/guilds/${guild.id}/audit-log`} className={"sidebarButton"}>📖 Audit Log</Link>
-      <Link href={`/guilds/${guild.id}/starboard`} className={"sidebarButton"}>⭐ Starboard</Link>
-      <Link href={`/guilds/${guild.id}/self-roles`} className={"sidebarButton"}>🖱️ Self-roles</Link>
+      <Link href={`/guilds/${guild.id}`} className={"sidebarButton"}>
+        <Icon path={mdiInformationBox} size={1} color={"var(--text-muted)"} className={"emoji"}/>
+        <span className={"sideBarText"}>Information</span>
+      </Link>
+      <Link href={`/guilds/${guild.id}/settings`} className={"sidebarButton"}>
+        <Icon path={mdiCog} size={1} color={"var(--text-muted)"} className={"emoji"}/>
+        <span className={"sideBarText"}>Settings</span>
+      </Link>
+      <Link href={`/guilds/${guild.id}/audit-log`} className={"sidebarButton"}>
+        <Icon path={mdiScriptText} size={1} color={"var(--text-muted)"} className={"emoji"}/>
+        <span className={"sideBarText"}>Audit Log</span>
+      </Link>
+      <Link href={`/guilds/${guild.id}/starboard`} className={"sidebarButton"}>
+        <Icon path={mdiStarCog} size={1} color={"var(--text-muted)"} className={"emoji"}/>
+        <span className={"sideBarText"}>Starboard</span>
+      </Link>
+      <Link href={`/guilds/${guild.id}/self-roles`} className={"sidebarButton"}>
+        <Icon path={mdiAccountBox} size={1} color={"var(--text-muted)"} className={"emoji"}/>
+        <span className={"sideBarText"}>Self Roles</span>
+      </Link>
     </div>
   )
 }
@@ -90,7 +107,9 @@ export default class GuildPage extends Component {
     return (
       <main className={"home"}>
         <GuildSidebar page={this.state.page} setPage={(page) => this.setState({page})} guild={this.state.guildData}/>
-        {subPage}
+        <div className={"content"}>
+          {subPage}
+        </div>
       </main>
     )
   }

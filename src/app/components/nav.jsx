@@ -44,12 +44,12 @@ function Nav() {
     <nav className={"navbar"}>
       <div style={{display: "flex", flexDirection: "row", alignItems: "center", gap: "1em"}}>
         <Link href="/">
-          <Image src={avatar} alt="avatar" width={64} height={64} className={"icon"}/>
+          <Image src={avatar} alt="avatar" width={64} height={64} className={"avatar"}/>
         </Link>
         <Link href={"/status"}>Status</Link>
       </div>
       <div>
-        <p><Icon size={1} path={mdiAlert} style={{verticalAlign: "middle"}}/> This is pre-release software!</p>
+        <p><Icon size={1} path={mdiAlert} style={{verticalAlign: "middle", display: "inline-block"}}/> This is pre-release software!</p>
         <StatusWidget />
       </div>
     </nav>

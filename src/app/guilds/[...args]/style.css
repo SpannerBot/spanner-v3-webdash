@@ -1,6 +1,7 @@
 .home {
     display: grid;
-    grid-template-columns: .1fr  1fr;
+    grid-template-columns: .1fr 1fr;
+    height: 100%
 }
 
 .sidebar {
@@ -10,18 +11,26 @@
     gap: 4px;
     align-items: stretch;
     background-color: var(--background-secondary);
-    padding: .5em;
-    margin-right: 5px;
-    width: 20%;
+    padding: .1rem .4rem;
+    max-width: 100%;
     min-width: 120px;
+    height: 100%;
 }
 
 .sidebar .sidebarButton {
     padding: 4px;
     color: var(--text-link);
     cursor: pointer;
+    font-size: 100%;
 }
 
 .sidebarButton:hover, .sidebarActive {
     background-color: var(--background-primary);
+}
+
+.content {
+    height: 100%;
+    overflow: scroll;
+    background-color: var(--background-primary);
+    padding: 1em
 }

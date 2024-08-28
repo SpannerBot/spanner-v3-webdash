@@ -64,13 +64,13 @@ export default class GuildSideBar extends Component {
     if(this.state.guilds.detail === "LOGIN_REQUIRED") {
       inner = (
         <Link href={util.API_URL + "/oauth2/login?return_to=" + location}>
-          <Icon path={mdiLogin} size={2} className={"large"} color={"#5865F2"} title={"Login Required"}/>
+          <Icon path={mdiLogin} size={2} className={"text-xl icon"} color={"#5865F2"} title={"Login Required"}/>
         </Link>
       )
     }
     else if(this.state.guilds[0].id === -1) {
       inner = (
-          <Icon path={mdiCloudOffOutline} size={2} className={"large"} color={"#f77"} title={"Error"}/>
+          <Icon path={mdiCloudOffOutline} size={2} className={"text-xl icon"} color={"#f77"} title={"Error"}/>
       )
     }
     else {
@@ -82,7 +82,7 @@ export default class GuildSideBar extends Component {
               width={50}
               height={50}
               alt={guild.name}
-              className={"guild-side-bar-icon " + (guild.present ? '' : 'absent')}
+              className={"guild-side-bar-icon icon " + (guild.present ? '' : 'absent')}
               data-guild_id={guild.id}
               title={guild.name}
               disabled={!guild.present}

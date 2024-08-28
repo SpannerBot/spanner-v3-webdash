@@ -58,7 +58,13 @@ function LatencyChart({history, range}) {
   }
 
   return (
-    <LineChart width={600} height={300} data={arrayToData(history)} style={{maxWidth: "100%"}} title={"Last 2 hours of latency"}>
+    <LineChart
+      width={600}
+      height={300}
+      data={arrayToData(history)}
+      style={{maxWidth: "100%"}}
+      domain={{y: [0, 5000]}}
+    >
       <Line type="monotone" dataKey="latency" stroke="#5865F2"/>
       <XAxis dataKey="time"/>
       <YAxis/>
@@ -145,7 +151,7 @@ export default function StatusPage() {
     <div style={{paddingLeft: "2em"}}>
       <div>
         <h1>Status: <strong>{realStatus}</strong></h1>
-        <p suppressHydrationWarning className={"small"}>
+        <p suppressHydrationWarning className={"text-sm"}>
           Last refresh: {new Date().toLocaleTimeString()} (interval: {swrParams.refreshInterval / 1000} seconds)
           {
             isLoading && <Spinner/>
