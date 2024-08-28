@@ -2,6 +2,7 @@
 import {Component} from "react";
 import SettingsPage from "./components/settings";
 import InformationPage from "./components/information";
+import AuditLogPage from "./components/audit-log";
 import Link from "next/link";
 import './style.css';
 import {getDiscordGuildData, Spinner} from "../../util";
@@ -60,6 +61,8 @@ export default class GuildPage extends Component {
           return <InformationPage guild={this.state.guildData}/>
         case "settings":
           return <SettingsPage guild={this.state.guildData}/>
+        case "audit-log":
+          return <AuditLogPage guild={this.state.guildData}/>
         default:
           return <p>Unknown page (not created yet?)</p>
       }

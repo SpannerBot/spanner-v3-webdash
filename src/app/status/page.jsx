@@ -101,7 +101,7 @@ export default function StatusPage() {
     if(data?.online === false) {
       problems.push({title: "Spanner is offline.", description: "The Spanner API is currently offline."});
     }
-    if(data?.guilds.unavailable.length > 0) {
+    if(data?.guilds?.unavailable?.length > 0) {
       problems.push({title: "Guilds Unavailable", description: `The bot is currently unavailable in ${data.guilds.unavailable.length} guilds.`});
     }
 

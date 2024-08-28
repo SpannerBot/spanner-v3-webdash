@@ -1,14 +1,40 @@
+"use client";
 import './footer.css';
 import Link from "next/link";
 import {API_URL, DISCORD_INVITE, BOT_SOURCE_URL, WEB_SOURCE_URL} from "../util";
+import { useEffect, useState } from 'react';
+import * as util from '../util';
+import { useRouter } from 'next/navigation';
 
 export default function Footer() {
+  const [hasSession, setHasSession] = useState(false);
+  const router = useRouter();
+  useEffect(
+    () => {
+      util.hasSession().then(setHasSession).catch(console.error);
+    }
+  )
+
+  const _logout = () => {
+    util.logout();
+    setHasSession(false);
+    router.replace("/");
+  }
   return (
     <footer className={"footer"}>
       <div>
         <p>
           Spanner v3 | Copyright {(new Date()).getUTCFullYear().toString()}
         </p>
+        <ul className={"clearList"}>
+          {
+            hasSession && (
+              <li>
+                <button type={"button"} className={"primaryButton"} onClick={_logout}>Logout</button>
+              </li>
+            )
+          }
+        </ul>
       </div>
       <div>
         <div style={{display: "flex", gap: "1em"}}>

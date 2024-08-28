@@ -6,12 +6,15 @@ import Nav from "./components/nav";
 import Footer from "./components/footer";
 import GuildSideBar from "./components/guildSideBar";
 
-const inter = Inter({ subsets: ["latin"] });
+// const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <head>
+        <title>Spanner v3 - Web Dashboard</title>
+      </head>
+      <body>
         <Nav/>
         <div className={"main-content"}>
           <GuildSideBar/>

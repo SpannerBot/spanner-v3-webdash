@@ -5,8 +5,6 @@ import discord_blurple from '../../public/discordblurple.png';
 import * as util from "./util";
 import {Avatar} from "./util";
 
-
-
 function GetUserInfo() {
     const [userInfo, setUserInfo] = useState(null);
 

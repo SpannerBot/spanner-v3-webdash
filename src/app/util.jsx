@@ -167,6 +167,7 @@ export async function auditLogsFor(guild_id) {
       break;
     }
     entries.push(...data.entries);
+    offset += data.entries.length;
   }
   return entries;
 }
@@ -319,4 +320,18 @@ export function Avatar({ url, id }) {
     setSrc(def);
   }
   return <Image src={src || def} alt="avatar" onError={onError} style={{borderRadius:"50%",height:"32px",width:"32px",verticalAlign:"middle"}} width={32} height={32}/>;
+}
+
+export async function hasSession() {
+  const response = await fetch(
+    `${API_URL}/oauth2/session`,
+    {credentials: "include"}
+  )
+  return response.ok;
+}
+
+export function logout() {
+  fetch(API_URL + "/oauth2/session", {method: "DELETE", credentials: "include"})
+  .then(() => true)
+  .catch(console.error);
 }
