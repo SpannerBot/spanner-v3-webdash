@@ -3,12 +3,23 @@ import {API_URL, Spinner} from "../util";
 import useSWR from "swr";
 import * as util from "../util";
 import './style.css';
+import { useSearchParams } from 'next/navigation';
 import {Avatar} from "../util";
-import {LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid} from 'recharts';
+import {LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, } from 'recharts';
+import {useState} from "react";
 
 function fetcher(url) {
-  return util.withBackoff(async () => fetch(url), 2, 1500)
-    .then((res) => {if(!res.ok) throw new Error('Failed to fetch'); return res.json()})
+  return util.withBackoff(
+    async () => fetch(url), 2, 1500)
+    .then(
+      (res) => {
+        if(!res.ok) {
+          let err= new Error('Failed to fetch')
+          err.response = res;
+        }
+        return res.json()
+      }
+    )
 }
 
 
@@ -29,70 +40,63 @@ function Problems({problems, offline}) {
   )
 }
 
-function LatencyChart({history}) {
-  // History is an array of integers, each representing the latency in milliseconds.
-  // There are up to 1440 of these, to represent each minute of the day.
-  // The most recent is at the end of the array.
-
+function LatencyChart({history, range}) {
   function arrayToData(h) {
+    h = h.toReversed().slice(0, range);
     let obj = {};
-    let now = new Date();
     for(let i = 0; i < h.length; i++) {
-      const date = new Date(now - (i * 60000) - 60000);
+      let entry = h[i];
+      const date = new Date(entry.timestamp_ms);
       obj[i] = {
         name: "Minutely latency",
-        latency: h[i],
-        date: date,
-        time: `${date.getHours()}:${date.getMinutes()}`
+        latency: entry.latency,
+        time: `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`
       };
     }
+
     return Object.values(obj).reverse();
   }
 
   return (
-    <LineChart width={600} height={300} data={arrayToData(history)} style={{maxWidth: "100%"}}>
+    <LineChart width={600} height={300} data={arrayToData(history)} style={{maxWidth: "100%"}} title={"Last 2 hours of latency"}>
       <Line type="monotone" dataKey="latency" stroke="#5865F2"/>
       <XAxis dataKey="time"/>
       <YAxis/>
       <Tooltip/>
       <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-
     </LineChart>
   )
 }
 
 export default function StatusPage() {
+  const params = useSearchParams();
+  const [range, setRange] = useState(120);
+  let refreshInterval = params.get("i")*1 || 5;
+  const swrParams = {
+    refreshInterval: refreshInterval * 1000,
+  }
   const {data, error, isLoading} = useSWR(
     API_URL + "/healthz",
     fetcher,
-    {
-      refreshInterval: 10000
-    }
+    swrParams
   );
-  /* data:
-      {
-        "status": "ok",
-        "online": true,
-        "uptime": 764,
-        "guilds": {
-          "total": 3,
-          "unavailable": []
-        },
-        "host": "1c12d3b5e16c",
-        "user": {
-          "id": "1018920700234436719",
-          "name": "RuntimeError",
-          "avatar": "eadd6dda28a5abf0e4bbcd33cec471b5"
-        }
-      }
-   */
 
   let problems = [];
   let realStatus = data?.status
   let avatarUrl=null;
   let isOffline = !!error || !data?.online || (data?.status !== "ok");
   if(error) {
-    problems.push({title: "Unable to reach the Spanner API.", description: error.message});
+    if(error.response) {
+      problems.push({title: "Unable to reach the Spanner API.", description: error.message});
+    }
+    else {
+      problems.push(
+        {
+          title: "Network Error",
+          description: "An unknown error occurred while contacting the Spanner API. Please check your connection.."
+        }
+      )
+    }
   }
   else {
     if(data?.user?.avatar) {
@@ -142,7 +146,7 @@ export default function StatusPage() {
       <div>
         <h1>Status: <strong>{realStatus}</strong></h1>
         <p suppressHydrationWarning className={"small"}>
-          Last refresh: {new Date().toLocaleTimeString()}
+          Last refresh: {new Date().toLocaleTimeString()} (interval: {swrParams.refreshInterval / 1000} seconds)
           {
             isLoading && <Spinner/>
           }
@@ -170,7 +174,26 @@ export default function StatusPage() {
       </div>
       <div>
         <p>Current websocket latency: {data?.latency?.now || '0'} milliseconds</p>
-        {data?.latency?.history?.length >= 3   && <LatencyChart history={data.latency.history}/>}
+        {
+          data?.latency?.history?.length >= 3 && (
+            <div>
+              <LatencyChart history={data.latency.history} range={range}/>
+              <div onDoubleClick={(e) => setRange(120)}>
+                <label for={"range"}>Range in minutes ({range}): </label>
+                <input
+                  type={"range"}
+                  id={"range"}
+                  value={range}
+                  onChange={(e) => setRange(e.target.value * 1)}
+                  min={2}
+                  max={1440}
+                  title={`${range} minutes`}
+                  style={{background: "transparent", border: "0", color: "var(--text-active)", verticalAlign: "middle"}}
+                />
+              </div>
+            </div>
+          )
+        }
       </div>
     </div>
   )
