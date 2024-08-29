@@ -6,6 +6,13 @@ import * as util from "./util";
 import * as api from "./api";
 import {Avatar} from "./util";
 
+
+const easter = (e) => {
+  if(e.key === "g") {
+    alert("You just lost the game!");
+  }
+}
+
 function GetUserInfo() {
     const [userInfo, setUserInfo] = useState(null);
 
@@ -15,11 +22,7 @@ function GetUserInfo() {
 
           api.get_user("@me").then(setUserInfo).catch((error) => {console.error(error);setUserInfo({detail: error.message})});
           document.addEventListener(
-            "keydown", (e) => {
-              if(e.key === "g") {
-                alert("You just lost the game!");
-              }
-            }
+            "keydown", easter
           )
         }, [userInfo]
     )
@@ -51,7 +54,7 @@ export default function Home() {
   return (
     <div style={{display: "flex", alignItems: "center", textAlign: "center", justifyContent: "center", flexDirection: "column", width: "100%"}}>
       <div>
-        <h1>Spanner v3 Web Dashboard</h1>
+        <h1>Spanner v3 <span onDblClick={easter}>Web</span> Dashboard</h1>
         <div style={{border: "2px solid red", padding: "1em", margin: "1em", backgroundColor: "#ff000033", borderRadius: "12px"}}>
           <p>Neither this dashboard, nor the bot, are released yet.</p>
           <p>Everything you see here is pre-release software.</p>
