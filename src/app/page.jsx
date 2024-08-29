@@ -54,7 +54,7 @@ export default function Home() {
   return (
     <div style={{display: "flex", alignItems: "center", textAlign: "center", justifyContent: "center", flexDirection: "column", width: "100%"}}>
       <div>
-        <h1>Spanner v3 <span onDblClick={easter}>Web</span> Dashboard</h1>
+        <h1>Spanner v3 <span onDoubleClick={easter}>Web</span> Dashboard</h1>
         <div style={{border: "2px solid red", padding: "1em", margin: "1em", backgroundColor: "#ff000033", borderRadius: "12px"}}>
           <p>Neither this dashboard, nor the bot, are released yet.</p>
           <p>Everything you see here is pre-release software.</p>
