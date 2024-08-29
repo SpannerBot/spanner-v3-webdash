@@ -59,10 +59,9 @@ function LatencyChart({history, range}) {
 
   return (
     <LineChart
-      width={600}
+      width={Math.max(window?.innerWidth || 500, 500)}
       height={300}
       data={arrayToData(history)}
-      style={{maxWidth: "100%"}}
       domain={{y: [0, 5000]}}
     >
       <Line type="monotone" dataKey="latency" stroke="#5865F2"/>
@@ -148,7 +147,7 @@ export default function StatusPage() {
   }
 
   return (
-    <div style={{paddingLeft: "2em"}}>
+    <div style={{paddingLeft: "1em", overflowY: "scroll"}}>
       <div>
         <h1>Status: <strong>{realStatus}</strong></h1>
         <p suppressHydrationWarning className={"text-sm"}>
