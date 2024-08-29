@@ -1,4 +1,5 @@
 import * as util from '../../../util';
+import * as api from '../../../api';
 import {useState, useEffect, Component} from "react";
 
 
@@ -12,14 +13,18 @@ function NicknameModerationWidget({guild, nicknameConfig, setNickNameModeration}
   function onChange(e) {
     const key = e.target.parentElement.dataset.key;
     const enabled = e.target.checked;
-    util.setNicknameModerationCategory(guild.id, key, enabled)
-      .then(setNickNameModeration)
-      .catch(
-        (er) => {
-          console.error(er);
-          e.target.checked = !enabled;
-        }
-      );
+    e.target.disabled = true;
+    let obj = {};
+    obj[key] = enabled;
+    api.set_nickname_moderation(guild.id, obj).then(
+      (result) => {e.target.disabled = false; setNickNameModeration(result)}
+    ).catch(
+      (er) => {
+        console.error(er);
+        e.target.checked = !enabled;
+        e.target.disabled = false
+      }
+    );
   }
 
   return (
@@ -49,33 +54,34 @@ function LogFeaturesWidget({guild, features}) {
     const key = e.target.parentElement.dataset.key;
     const enabled = e.target.checked;
     e.target.disabled = true;
+
+    let func;
     if(enabled) {
-      util.enableLoggingFeature(guild.id, key).then(() => {e.target.disabled = false}).catch(
-        (er) => {
-          console.error(er);
-          e.target.checked = !enabled;
-          e.target.disabled = false
-        }
-      );
-    } else {
-      util.enableLoggingFeature(guild.id, key).then(() => {e.target.disabled = false}).catch(
-        (er) => {
-          console.error(er);
-          e.target.checked = !enabled;
-          e.target.disabled = false
-        }
-      );
+      func = api.enable_logging_feature;
     }
+    else {
+      func = api.disable_logging_feature
+    }
+
+    func(guild.id, key).then(
+      (result) => {e.target.disabled = false; setLogFeatures(result)}
+    ).catch(
+      (er) => {
+        console.error(er);
+        e.target.checked = !enabled;
+        e.target.disabled = false
+      }
+    );
   }
   if(!features) return <p>You do not have any log features enabled.</p>
   else if (features.err) return <p>Failed to load log features: {features.err.message}</p>
   return (
     <div>
       <div role="alert">
-        <div class="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+        <div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
           Danger
         </div>
-        <div class="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+        <div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
           <p>Changes are automatically saved!</p>
         </div>
       </div>
@@ -115,7 +121,7 @@ export default class SettingsPage extends Component {
   async checkPermissions() {
     try {
       this.setState({loading: true});
-      const result = await util.hasGuildPermissions(this.props.guild.id, 0x20);
+      const result = (await api.get_guild_member_permissions(this.props.guild.id, "@me") & 0x20) === 0x20;
       this.setState({hasAccess: result, loaded: true});
       return result;
     } catch (e) {

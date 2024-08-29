@@ -23,7 +23,7 @@ export async function withBackoff(call, max_retries=5, max_sleep=5000) {
     } catch(e) {
       console.error(e);
       if(!errors.includes(e.message)) errors.push(e.message);
-      let sleep = (2 ** retries) * 1000;
+      let sleep = (2 ** retries) * 1000 + Math.random() * 1000;
       if(sleep > max_sleep) {
         sleep = max_sleep;
       }
@@ -206,23 +206,7 @@ export async function getDiscordGuildChannel(guild_id, channel_id) {
 }
 
 export async function getLoggedInUser() {
-  const response = await fetch(
-    `${API_URL}/_discord/users/@me`,
-    {credentials: "include"}
-  )
-  if(response.status === 403) {
-    return {detail: "Not logged in"};
-  }
-  if(response.status === 429) {
-    const retry_after = response.headers.get("Retry-After");
-    console.warn("Rate limited, retrying after %d seconds", retry_after);
-    await new Promise((resolve) => setTimeout(resolve, retry_after * 1000));
-    return await getLoggedInUser();
-  }
-  if(!response.ok) {
-    throw new Error("Failed to fetch user data");
-  }
-  return await response.json();
+  throw new Error("Use api.get_user('@me');")
 }
 
 export async function getUserGuilds() {

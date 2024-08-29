@@ -6,7 +6,8 @@
     padding-top: .7em;
     margin-right: 1em;
     overflow-y: scroll;
-    height: 95vh;
+    min-height: 95vh;
+    max-height: 100%;
 }
 .guild-side-bar-inner {
     display: flex;

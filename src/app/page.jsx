@@ -3,6 +3,7 @@ import {useEffect, useState} from "react";
 import Image from "next/image";
 import discord_blurple from '../../public/discordblurple.png';
 import * as util from "./util";
+import * as api from "./api";
 import {Avatar} from "./util";
 
 function GetUserInfo() {
@@ -11,12 +12,18 @@ function GetUserInfo() {
     useEffect(
         () => {
           if(!!userInfo) return;
-          util.withBackoff(util.getLoggedInUser, 3)
-            .then(setUserInfo)
-            .catch((error) => {setUserInfo({detail: error.message})});
+
+          api.get_user("@me").then(setUserInfo).catch((error) => {console.error(error);setUserInfo({detail: error.message})});
+          document.addEventListener(
+            "keydown", (e) => {
+              if(e.key === "g") {
+                alert("You just lost the game!");
+              }
+            }
+          )
         }, [userInfo]
     )
-    if (userInfo === null) {
+    if (!userInfo) {
         return <p><util.Spinner/>Loading account data...</p>;
     }
     else if (userInfo.detail === "Not logged in") {

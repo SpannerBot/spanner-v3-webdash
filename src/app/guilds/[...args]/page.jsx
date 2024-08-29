@@ -3,6 +3,7 @@ import {Component} from "react";
 import SettingsPage from "./components/settings";
 import InformationPage from "./components/information";
 import AuditLogPage from "./components/audit-log";
+import BigPage from "./components/bigPage";
 import Link from "next/link";
 import './style.css';
 import {getDiscordGuildData, Spinner} from "../../util";
@@ -80,6 +81,8 @@ export default class GuildPage extends Component {
           return <SettingsPage guild={this.state.guildData}/>
         case "audit-log":
           return <AuditLogPage guild={this.state.guildData}/>
+        case "big-page":
+          return <BigPage/>
         default:
           return <p>Unknown page (not created yet?)</p>
       }

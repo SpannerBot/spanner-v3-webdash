@@ -1,7 +1,6 @@
 .home {
     display: grid;
     grid-template-columns: .1fr 1fr;
-    height: 100%
 }
 
 .sidebar {
@@ -29,8 +28,10 @@
 }
 
 .content {
-    height: 100%;
-    overflow: scroll;
+    overflow-x: auto;
+    overflow-y: scroll;
+    break-after: auto;
+    line-break: anywhere    ;
     background-color: var(--background-primary);
     padding: 1em
 }

@@ -1,5 +1,6 @@
 import {Component} from "react";
 import * as util from "../util";
+import * as api from "../api";
 import './guildSideBar.css'
 import Link from "next/link";
 import Image from "next/image";
