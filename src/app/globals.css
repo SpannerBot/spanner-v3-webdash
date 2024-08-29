@@ -1,3 +1,20 @@
+@font-face {
+    font-family: 'gg sans';
+    src:
+        local('gg sans'),
+        url('/_gg_sans/gg_sans_Normal.woff2') format('woff2'),
+        url('/_gg_sans/gg_sans_Normal.ttf') format('opentype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "Whitney";
+    src:
+        local("Whitney"), 
+        url("/_whitney/whitneymedium.woff2") format("woff2"),
+        url("/_whitney/whitneymedium.otf") format("opentype");
+}
+
 :root {
     --background-primary: #313338;
     --background-secondary: #2A2D31;
@@ -21,11 +38,17 @@
 html, body {
     margin: 0;
     padding: 0;
-    font-family: 'Whitney', 'Roboto', sans-serif;
-    background-color: var(--background-tertiary);
+    font-family: 'gg sans', 'Whitney', 'Roboto', sans-serif;
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    background-color: #ff00dc;
     color: var(--text-active);
     width: 100%;
     font-size: 16px
+}
+
+body {
+    background-color: var(--background-primary);
 }
 
 a {
@@ -74,4 +97,39 @@ a {
     width: 1em;
     margin: 0 .05em 0 .1em;
     vertical-align: middle;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+.text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+}
+
+.text-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.text-2xl {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.text-3xl {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
 }

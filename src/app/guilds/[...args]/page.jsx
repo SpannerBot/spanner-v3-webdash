@@ -95,7 +95,7 @@ export default class GuildPage extends Component {
           <br/>
           <p>
             Did you want to
-            <Link href={`${util.API_URL}/oauth2/invite?guild_id=${this.state.guildData?.id}`}>invite Spanner?</Link>
+            <Link href={`${util.API_URL}/oauth2/invite?guild_id=${this.state.guildData?.id}&return_to=${location}`}>invite Spanner?</Link>
           </p>
         </div>
       )

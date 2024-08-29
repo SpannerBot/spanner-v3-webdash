@@ -76,7 +76,7 @@ function LatencyChart({history, range}) {
 
 export default function StatusPage() {
   const params = useSearchParams();
-  const [range, setRange] = useState(120);
+  const [range, setRange] = useState(30);
   let refreshInterval = params.get("i")*1 || 5;
   const swrParams = {
     refreshInterval: refreshInterval * 1000,

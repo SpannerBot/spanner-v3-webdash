@@ -76,7 +76,7 @@ export default class GuildSideBar extends Component {
     else {
       inner = this.state.guilds?.map((guild) => {
         return (
-          <Link href={`/guilds/${guild.id}`} key={guild.id}>
+          <Link href={`/guilds/${guild.id}`} key={guild.id} prefetch={guild.present}>
             <Image
               src={guild.icon_url || guildIconUrl(guild.id, guild.icon)}
               width={50}

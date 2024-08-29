@@ -3,7 +3,7 @@ import * as utils from '../../../util';
 import { useEffect } from 'react';
 
 function AuditLogEntry({entry}) {
-  if(entry.version <= 2) {
+  if(!entry.version || entry.version <= 2) {
     return (
       <div className={"auditLogEntry"}>
         <p style={{fontSize: "smaller"}}><i>Audit log entry is too old to display.</i></p>
@@ -11,6 +11,28 @@ function AuditLogEntry({entry}) {
     )
   }
   const createdAt = new Date(entry.created_at);
+
+  const [authorData, setAuthorData] = useState(
+    {
+      id: entry.metadata?.author?.id || entry.author.toString(),
+      loaded: false
+    }
+  );
+
+  useEffect(
+    () => {
+      if(authorData.loaded) return;
+      utils.withBackoff(
+        () => utils.getUser(authorData.id),
+      )
+      .then((r) => {setAuthorData({...authorData, ...r, loaded: true})})
+      .catch(
+        (e) => {console.error(e); setAuthorData({...authorData, loaded: true})}
+      )
+    },
+    [authorData]
+  )
+
   return (
     <div className={"auditLogEntry"}>
       <details>
