@@ -12,6 +12,7 @@
 .guild-side-bar-inner {
     display: flex;
     flex-direction: column;
+    height: 95vh
 }
 
 .guild-side-bar-icon {

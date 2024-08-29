@@ -83,6 +83,8 @@ export default class GuildPage extends Component {
           return <AuditLogPage guild={this.state.guildData}/>
         case "big-page":
           return <BigPage/>
+        case "blank":
+          return null;
         default:
           return <p>Unknown page (not created yet?)</p>
       }
