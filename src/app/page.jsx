@@ -6,6 +6,7 @@ import discord_blurple from '../../public/discordblurple.png';
 import * as util from "./util";
 import * as api from "./api";
 import {Avatar} from "./util";
+import { Suspense } from 'react'
 
 
 const easter = (e)  => {
@@ -53,8 +54,7 @@ function GetUserInfo() {
     }
 }
 
-
-export default function Home() {
+function Goofy() {
   const params = useSearchParams();
   const isG = !!params.get("g");
 
@@ -68,18 +68,39 @@ export default function Home() {
       }
     }, [isG]
   )
+  return null;
+}
+
+
+export default function Home() {
 
   return (
-    <div style={{display: "flex", alignItems: "center", textAlign: "center", justifyContent: "center", flexDirection: "column", width: "100%"}}>
-      <div>
-        <h1>Spanner v3 Web Dashboard</h1>
-        <div style={{border: "2px solid red", padding: "1em", margin: "1em", backgroundColor: "#ff000033", borderRadius: "12px"}}>
-          <p>Neither this dashboard, nor the bot, are released yet.</p>
-          <p>Everything you see here is pre-release software.</p>
-          <p>You use this at your own risk.</p>
+    <Suspense>
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        textAlign: "center",
+        justifyContent: "center",
+        flexDirection: "column",
+        width: "100%"
+      }}>
+        <Goofy/>
+        <div>
+          <h1>Spanner v3 Web Dashboard</h1>
+          <div style={{
+            border: "2px solid red",
+            padding: "1em",
+            margin: "1em",
+            backgroundColor: "#ff000033",
+            borderRadius: "12px"
+          }}>
+            <p>Neither this dashboard, nor the bot, are released yet.</p>
+            <p>Everything you see here is pre-release software.</p>
+            <p>You use this at your own risk.</p>
+          </div>
+          <GetUserInfo/>
         </div>
-        <GetUserInfo />
       </div>
-    </div>
+    </Suspense>
   );
 }
