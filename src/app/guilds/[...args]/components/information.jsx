@@ -29,7 +29,11 @@ export default function InformationPage({guild}) {
   const hasPermission = ((guild.permissions & 0x20) == 0x20 || guild.owner);
   return (
     <div>
-      <h1>Server information: {guild?.name || 'Unknown guild'}</h1>
+      <h1>
+        Server info<span className={"hideOnMobile"}>rmation</span>:
+        <br className={"hideOnDesktop"}/>
+        {guild?.name || 'Unknown guild'}
+      </h1>
       <div>Server ID: <code>{guild?.id}</code></div>
       {
         guild?.owner ? <p>You own this server.</p> : <p>You do not own this server.</p>

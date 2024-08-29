@@ -83,7 +83,7 @@ export default class GuildSideBar extends Component {
               width={50}
               height={50}
               alt={guild.name}
-              className={"guild-side-bar-icon icon " + (guild.present ? '' : 'absent')}
+              className={"icon guild-side-bar-icon " + (guild.present ? '' : 'absent')}
               data-guild_id={guild.id}
               title={guild.name}
               disabled={!guild.present}

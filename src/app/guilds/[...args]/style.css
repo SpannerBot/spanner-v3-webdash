@@ -31,7 +31,27 @@
     overflow-x: auto;
     overflow-y: scroll;
     break-after: auto;
-    line-break: anywhere    ;
+    line-break: loose;
     background-color: var(--background-primary);
     padding: 1em
+}
+
+.featureList {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1em;
+}
+
+@media screen and (max-width: 800px) {
+    .sideBarText {
+        display: none
+    }
+    .featureList {
+        grid-template-columns: 1fr;
+        gap: 0
+    }
+    .sidebar {
+        min-width: 32px;
+        width: fit-content(100%);
+    }
 }

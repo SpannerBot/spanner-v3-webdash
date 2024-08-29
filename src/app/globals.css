@@ -85,11 +85,28 @@ a:hover {
 
 .avatar, .icon {
     border-radius: 50%;
-    height: 32px;
-    width: 32px;
+    max-height: 50px;
+    max-width: 50px;
     display: inline-block;
     vertical-align: middle;
     transition: box-shadow 0.2s ease-in-out;
+}
+
+@media screen and (max-width: 800px) {
+    .avatar, .icon {
+        max-height: 42px;
+        max-width: 42px;
+    }
+
+    .hideOnMobile {
+        display: none;
+    }
+}
+
+@media screen and (min-width: 801px) {
+    .hideOnDesktop {
+        display: none;
+    }
 }
 
 .avatar:hover, .icon:hover {

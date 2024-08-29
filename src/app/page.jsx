@@ -73,7 +73,6 @@ function Goofy() {
 
 
 export default function Home() {
-
   return (
     <Suspense>
       <div style={{
