@@ -1,5 +1,6 @@
 "use client";
 import {useEffect, useState} from "react";
+import Link from "next/link";
 import {useSearchParams} from "next/navigation";
 import Image from "next/image";
 import discord_blurple from '../../public/discordblurple.png';
@@ -35,14 +36,20 @@ function GetUserInfo() {
         return <p><util.Spinner/>Loading account data...</p>;
     }
     else if (userInfo.detail === "Not logged in") {
-        return <a href={`${util.API_URL}/oauth2/login?return_to=${location}`}>
-          Log in with
-          <Image src={discord_blurple} alt="Discord" title="Discord" width={30} height="auto" style={{verticalAlign: "middle"}}/>
+        return <Link href={`${util.API_URL}/oauth2/login?return_to=${location}`}>
+          Authenticate spanner with Discord
           to continue
-        </a>;
+        </Link>;
     }
     else if (userInfo.detail) {
-        return <p>Error checking login status: <code>{userInfo.detail}</code>. Try clearing your cookies.</p>;
+        return (
+          <>
+            <p>Error checking login status: <code>{userInfo.detail}</code>. Try clearing your browser cache.</p>
+            <p>
+              Alternatively, you can try <Link href={`${util.API_URL}/oauth2/login?return_to=${location}`}>re-authenticating.</Link>
+            </p>
+          </>
+        );
     }
     else {
         return (
