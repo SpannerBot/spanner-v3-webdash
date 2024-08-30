@@ -33,13 +33,21 @@
     break-after: auto;
     line-break: loose;
     background-color: var(--background-primary);
-    padding: 1em
+    padding: 1em;
+    border-radius: 6px 0 6px 0;
 }
 
 .featureList {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1em;
+}
+
+.settingsPageMain {
+    display: flex;
+    flex-direction: row;
+    /*justify-content: space-evenly;*/
+    gap: 4rem
 }
 
 @media screen and (max-width: 800px) {
@@ -52,6 +60,79 @@
     }
     .sidebar {
         min-width: 32px;
-        width: fit-content(100%);
+        width: fit-content;
     }
+
+    .settingsPageMain {
+        flex-direction: column;
+    }
+}
+
+.dualColumnTable {
+    min-width: fit-content;
+    border-collapse: collapse;
+    word-break: break-word;
+    line-height: 22px;
+    border: 1px solid var(--background-tertiary);
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    font-size: 16px;
+    margin-top: 0;
+    text-align: center;
+}
+
+.dualColumnTable thead tr, .dualColumnTable tbody tr {
+    border: 1px transparent
+}
+
+.dualColumnTable thead {
+    background-color: var(--background-tertiary);
+}
+
+.dualColumnTable tbody tr:nth-child(even) {
+    background-color: var(--background-secondary);
+}
+
+.dualColumnTable tbody tr:nth-child(odd) {
+    background-color: var(--background-primary);
+}
+
+.dualColumnTable * * {
+    padding: .7em;
+}
+
+input[type="checkbox"] {
+    transition: background-color .25s, color .25s, accent-color .25s;
+    margin-bottom: 0;
+    width: 1.25em;
+    height: 1.25em;
+    appearance: none;
+    border-radius: 3px;
+    border: 1px solid black;
+}
+
+input[type="checkbox"]:checked {
+    background: #57F287;
+    accent-color: #57F287;
+    color: #57F287;
+}
+
+input[type="checkbox"]:disabled {
+    accent-color: #FEE75C;
+    background: #FEE75C;
+    color: #FEE75C;
+}
+
+input[type="checkbox"]:not(:checked) {
+    background: #ED4245;
+    accent-color: #ED4245;
+    color: #ED4245;
+}
+
+.auditLogEntry {
+    margin-bottom: .7em;
+    background-color: var(--background-secondary);
+    padding: 10px;
+    border: 1px solid var(--background-tertiary);
+    border-radius: 6px;
 }

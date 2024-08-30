@@ -42,7 +42,6 @@ async function fetchWithRatelimit(
             )
             return response;
         }
-        console.dir(response.headers);
         console.debug("Retry-After header: %r", response.headers.get("Retry-After"));
         console.debug("Retry-After resolves to: %d", response.headers.get("Retry-After") * 1000);
         const retryAfter = response.headers.get("Retry-After") * 1000;
@@ -50,7 +49,7 @@ async function fetchWithRatelimit(
             "Ratelimited on \"%s %s\", retrying in %.2f seconds.",
             method,
             path,
-            retryAfter
+            retryAfter / 1000
         )
         await new Promise((resolve) => setTimeout(resolve, retryAfter));
         __retryCount++;
@@ -67,24 +66,30 @@ async function fetchWithRatelimit(
 }
 
 export async function healthz() {
-    return await fetch(API_URL + "/healthz", {mode: "cors"});
-}
-
-
-export async function oauth2_whoami() {
-    return await fetch(API_URL + "/oauth2/whoami", {mode: "cors"});
+    return await (await fetch(API_URL + "/healthz", {mode: "cors"})).json();
 }
 
 export async function oauth2_get_session() {
-    return await fetch(API_URL + "/oauth2/session", {mode: "cors"});
+    const result = await fetch(API_URL + "/oauth2/session", {mode: "cors", credentials: "include"});
+    const data = await result.json();
+    if((data.expires_at * 1000) < Date.now()) {
+        console.warn("Session has expired, refreshing...");
+        return await oauth2_refresh_session();
+    }
+    return data
+}
+
+export async function oauth2_refresh_session() {
+    const response = await fetch(API_URL + "/oauth2/session", {method: "PUT", mode: "cors", credentials: "include"});
+    return await response.json();
 }
 
 export async function oauth2_delete_session() {
-    return await fetch(API_URL + "/oauth2/session", {method: "DELETE", mode: "cors"});
+    return await fetch(API_URL + "/oauth2/session", {method: "DELETE", mode: "cors", credentials: "include"});
 }
 
 
-export async function get_user_guillds() {
+export async function get_user_guilds() {
     return await fetchWithRatelimit("GET", "/_discord/users/@me/guilds");
 }
 
@@ -153,7 +158,7 @@ export async function get_logging_channel_id(guild_id) {
 }
 
 export async function get_all_logging_features() {
-    return await fetch(API_URL + "/config/0/logging/features/all");
+    return (await fetch(API_URL + "/config/0/logging/features/all")).json();
 }
 
 export async function get_enabled_logging_features(guild_id) {
@@ -164,7 +169,8 @@ export async function enable_logging_feature(guild_id, feature) {
     return await fetchWithRatelimit(
         "PUT", 
         `/config/${guild_id}/logging/features/${feature}`,
-        {enabled: true}
+      {},
+      {enabled: true}
     );
 }
 
@@ -172,7 +178,8 @@ export async function disable_logging_feature(guild_id, feature) {
     return await fetchWithRatelimit(
         "PUT", 
         `/config/${guild_id}/logging/features/${feature}`,
-        {enabled: false}
+      {},
+      {enabled: false}
     );
 }
 

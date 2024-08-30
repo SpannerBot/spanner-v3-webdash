@@ -11,7 +11,8 @@ function NicknameModerationWidget({guild, nicknameConfig, setNickNameModeration}
   }
 
   function onChange(e) {
-    const key = e.target.parentElement.dataset.key;
+    console.error("E:", e)
+    const key = e.target.dataset.featurename;
     const enabled = e.target.checked;
     e.target.disabled = true;
     let obj = {};
@@ -30,41 +31,62 @@ function NicknameModerationWidget({guild, nicknameConfig, setNickNameModeration}
   return (
     <div>
       <p>
-        AI Nickname moderation is enabled. Currently, the following categories are being filtered:
+        AI Nickname moderation is enabled.
       </p>
-      <ul>
+      <p>
+        Currently, the following categories are being filtered:
+      </p>
+      <table className={"dualColumnTable"}>
+        <thead>
+        <tr>
+          <th>Feature Name</th>
+          <th>Enabled</th>
+        </tr>
+        </thead>
+        <tbody>
         {
-          Object.keys(nicknameConfig).map((key) => {
-            const enabled = nicknameConfig[key];
-            if(key==="id") return null;
-            return (
-              <li key={key || Math.random().toString()} data-key={key}>
-                {key}: <input type={"checkbox"} defaultChecked={enabled} onChange={onChange}/>
-              </li>
-            )
-          })
+          Object.keys(nicknameConfig).map(
+            (key) => {
+              const enabled = nicknameConfig[key];
+              return (
+                <tr key={key}>
+                  <td className={"text-left"}>{key}</td>
+                  <td className={"text-center"}>
+                    <input type={"checkbox"} defaultChecked={enabled} onChange={onChange} data-key  ={key}/>
+                  </td>
+                </tr>
+              )
+            }
+          )
         }
-      </ul>
+        </tbody>
+      </table>
     </div>
   )
 }
 
 function LogFeaturesWidget({guild, features}) {
   function onChange(e) {
-    const key = e.target.parentElement.dataset.key;
+    const key = e.target.dataset.key;
     const enabled = e.target.checked;
     e.target.disabled = true;
 
     let func;
-    if(enabled) {
+    if (enabled) {
       func = api.enable_logging_feature;
-    }
-    else {
+    } else {
       func = api.disable_logging_feature
     }
 
     func(guild.id, key).then(
-      (result) => {e.target.disabled = false; setLogFeatures(result)}
+      (result) => {
+        e.target.disabled = false;
+        if (result.detail) {
+          console.error(result.detail);
+          e.target.checked = !enabled;
+          e.target.disabled = false;
+        }
+      }
     ).catch(
       (er) => {
         console.error(er);
@@ -75,22 +97,38 @@ function LogFeaturesWidget({guild, features}) {
   }
   if(!features) return <p>You do not have any log features enabled.</p>
   else if (features.err) return <p>Failed to load log features: {features.err.message}</p>
+
   return (
     <div>
       <p>
         The following features are available for logging:
       </p>
-      <div className={"featureList"}>
-        {
-          features.map((feature) => {
-            return (
-              <div key={feature.id || feature.name} data-key={feature.name}>
-                {feature.name}: <input type={"checkbox"} defaultChecked={feature.enabled} onChange={onChange}/>
-              </div>
+      <table className={"dualColumnTable"}>
+        <thead>
+          <tr>
+            <th>Feature Name</th>
+            <th>Enabled</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            features.map(
+              (feature) => {
+                const name = feature.name;
+                const enabled = feature.enabled;
+                return (
+                  <tr key={name || Math.random().toString()} data-key={name}>
+                    <td className={"text-left"}>{name}</td>
+                    <td className={"text-middle"}>
+                      <input type={"checkbox"} defaultChecked={enabled} data-key={feature.name} onChange={onChange}/>
+                    </td>
+                  </tr>
+                )
+              }
             )
-          })
-        }
-      </div>
+          }
+        </tbody>
+      </table>
     </div>
   )
 }
@@ -152,9 +190,9 @@ export default class SettingsPage extends Component {
       let enabledFeatures = await util.getEnabledLoggingFeatures(this.props.guild.id);
       const allFeatures = await util.getAllLoggingFeatures(this.props.guild.id);
       // Add any features from all features missing from enabled as [key]=false
-      for(let feature of allFeatures) {
-        if(!enabledFeatures.find((f) => f.id === feature.id)) {
-          enabledFeatures.push({id: null, name: feature, enabled: false});
+      for(let featureName of allFeatures) {
+        if(!Object.keys(enabledFeatures).includes(featureName)) {
+          enabledFeatures[featureName] = false;
         }
       }
       this.setState({logFeatures: enabledFeatures, loading: false});
@@ -205,20 +243,33 @@ export default class SettingsPage extends Component {
       return (
         <div>
           <h2>Server settings:</h2>
-          <h3>📖 Logging</h3>
-          <p>
-            Logging channel: {
-            (this.state.logChannel && !this.state.logChannel.err)
-              ? <a href={`https://discord.com/channels/${this.props.guild.id}/${this.state.logChannel.id}`}>#{this.state.logChannel.name}</a>
-              : <span>No logging channel set</span>
-          }
-          </p>
-          <LogFeaturesWidget guild={this.props.guild} features={this.state.logFeatures} setLogFeatures={() => null }
-                             allFeatures={this.state.logFeatures}/>
-          <br/>
-          <h3>🖥️ AI Nickname Moderation</h3>
-          <NicknameModerationWidget guild={this.props.guild} nicknameConfig={this.state.nickNameModeration}
-                                    setNickNameModeration={() => null }/>
+          <div className={"settingsPageMain"}>
+            <div>
+              <h3>📖 Logging</h3>
+              <p>
+                Logging channel: {
+                (this.state.logChannel && !this.state.logChannel.err)
+                  ? <a
+                    href={`https://discord.com/channels/${this.props.guild.id}/${this.state.logChannel.id}`}>#{this.state.logChannel.name}</a>
+                  : <span>No logging channel set</span>
+              }
+              </p>
+              <LogFeaturesWidget
+                guild={this.props.guild}
+                features={this.state.logFeatures}
+                setLogFeatures={() => null}
+                allFeatures={this.state.logFeatures}
+              />
+            </div>
+            <div>
+              <h3>🖥️ AI Nickname Moderation</h3>
+              <NicknameModerationWidget
+                guild={this.props.guild}
+                nicknameConfig={this.state.nickNameModeration}
+                setNickNameModeration={() => null}
+              />
+            </div>
+          </div>
         </div>
       )
     }

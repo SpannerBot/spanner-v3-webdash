@@ -1,4 +1,5 @@
 "use client";
+import Head from "next/head";
 import {Component} from "react";
 import SettingsPage from "./components/settings";
 import InformationPage from "./components/information";
@@ -68,6 +69,7 @@ export default class GuildPage extends Component {
         console.error(e);
       }
       this.setState({loaded: true});
+      document.title = `Spanner v3 - Web Dashboard - ${this.state.guildData?.name}` || "Guild";
     }
     inner.bind(this)().then().catch(console.error);
   }

@@ -1,20 +1,20 @@
 "use client";
-import { Inter } from "next/font/google";
 import "./globals.css";
+import localFont from 'next/font/local'
 
 import Nav from "./components/nav";
 import Footer from "./components/footer";
 import GuildSideBar from "./components/guildSideBar";
 
-// const inter = Inter({ subsets: ["latin"] });
+const ggSans = localFont({ src: './_gg_sans/gg_sans_Normal.woff2' });
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" className={ggSans.className}>
       <head>
         <title>Spanner v3 - Web Dashboard</title>
       </head>
-      <body>
+      <body className={ggSans.className}>
         <Nav/>
         <div className={"main-content"}>
           <GuildSideBar/>
