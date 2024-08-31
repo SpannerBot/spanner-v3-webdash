@@ -59,7 +59,7 @@ function LatencyChart({history, range}) {
 
   return (
     <LineChart
-      width={Math.max(window?.innerWidth || 500, 500)}
+      width={Math.max(Math.floor(window?.innerWidth * 0.8) || 500, 500)}
       height={300}
       data={arrayToData(history)}
       domain={{y: [0, 5000]}}
