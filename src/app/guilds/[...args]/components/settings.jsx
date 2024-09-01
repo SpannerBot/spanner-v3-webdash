@@ -188,11 +188,23 @@ export default class SettingsPage extends Component {
     try {
       this.setState({loading: true});
       let enabledFeatures = await util.getEnabledLoggingFeatures(this.props.guild.id);
+      enabledFeatures = enabledFeatures || [];
+      console.debug("Enabled features:", enabledFeatures);
       const allFeatures = await util.getAllLoggingFeatures(this.props.guild.id);
       // Add any features from all features missing from enabled as [key]=false
       for(let featureName of allFeatures) {
-        if(Object.keys(enabledFeatures).find((key) => key === featureName) === undefined) {
-          enabledFeatures[featureName] = false;
+        let found = Object.keys(enabledFeatures).find((key) => key === featureName);
+        if(!found) {
+          console.debug("Adding missing feature:", featureName);
+          enabledFeatures.push(
+            {
+              name: featureName,
+              enabled: false
+            }
+          );
+        }
+        else {
+          console.debug("Feature already found:", featureName);
         }
       }
       this.setState({logFeatures: enabledFeatures, loading: false});
