@@ -20,7 +20,7 @@ function AuditLogEntry({entry, user_cache}) {
     };
   }
   const [rawHidden, setRawHidden] = useState(true);
-  const target = entry.target || 'unknown target';
+  const target = entry.target?.name || entry.target || 'unknown target';
   const authorData = getUserData();
   if(!entry.version || entry.version <= 2) {
     return (
@@ -39,7 +39,7 @@ function AuditLogEntry({entry, user_cache}) {
   return (
     <div className={"auditLogEntry text-lg"}>
       <details onDoubleClick={() => {setRawHidden(!rawHidden);Prism.highlightAll()}}>
-        <summary>[{entry.namespace}] <strong>{authorData.display_name || 'unknown user'}</strong> {entry.metadata["action.historical"] || entry.action} {entry.metadata?.target?.name || 'unknown target'}</summary>
+        <summary>[{entry.namespace}] <strong>{authorData.display_name || 'unknown user'}</strong> {entry.metadata["action.historical"] || entry.action} {target}</summary>
         <blockquote>{entry.description}</blockquote>
         <p className={"text-xs"}>ID: <code>{entry.id}</code> | {createdAt.toLocaleDateString()} at {createdAt.toLocaleTimeString()}</p>
         <pre className={"language-js"} hidden={rawHidden}>
